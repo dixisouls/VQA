@@ -2,37 +2,80 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.dark {
+  background-color: #1a202c;
+  color: #f7fafc;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+.page-transition {
+  position: relative;
+  width: 100%;
+}
+
+/* VizWiz specific animations */
+.question-bubble {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* Accessible focus indicators */
+:focus {
+  outline: 2px solid #0ea5e9;
+  outline-offset: 2px;
 }
 
-.App-link {
-  color: #61dafb;
+/* Mobile responsiveness enhancements */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
 
-@keyframes App-logo-spin {
+/* Custom animations */
+.animate-slide-up {
+  animation: slideUp 0.5s ease forwards;
+}
+
+@keyframes slideUp {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
+    transform: translateY(20px);
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Architecture diagram specific styles */
+.architecture-node {
+  transition: all 0.3s ease;
+}
+
+.architecture-node:hover {
+  filter: drop-shadow(0 0 8px rgba(14, 165, 233, 0.5));
+  transform: scale(1.05);
+}
+
+.architecture-connection {
+  stroke-dasharray: 10;
+  animation: dash 20s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 1000;
   }
 }

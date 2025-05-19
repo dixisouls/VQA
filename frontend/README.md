@@ -1,70 +1,106 @@
-# Getting Started with Create React App
+# VizWiz Visual QA Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This repository contains the frontend for a Visual Question Answering (VQA)
+system built with React and TailwindCSS. This application allows users to upload
+images, ask questions about them, and get AI-powered answers.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Interactive UI**: Smooth animations and transitions using Framer Motion
+- **Dark Mode**: Full support for light and dark modes
+- **Responsive Design**: Works on desktops, tablets, and mobile devices
+- **Model Architecture Visualization**: Visual representation of the VQA model
+- **Real-time Confidence Visualization**: Visual indicators for answer
+  confidence
+- **Question History**: Track previous questions and answers
 
-### `npm start`
+## Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. **Clone the repository**:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+git clone https://github.com/dixisouls/vizwiz-frontend.git
+cd vizwiz-frontend
+```
 
-### `npm test`
+2. **Install dependencies**:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm install
+```
 
-### `npm run build`
+3. **Start the development server**:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm start
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The application will be available at http://localhost:3000.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Project Structure
 
-### `npm run eject`
+```
+src/
+├── components/          # Reusable UI components
+│   ├── Header.jsx       # Navigation header
+│   ├── Footer.jsx       # Page footer
+│   ├── LoadingAnimation.jsx # Loading indicators
+│   ├── ModelArchitecture.jsx # Model visualization
+│   ├── QuestionForm.jsx # Question input form
+│   ├── ResultVisualization.jsx # Answer visualization
+│   └── UploadComponent.jsx # Image upload component
+├── pages/               # Application pages
+│   ├── Home.jsx         # Landing page
+│   ├── Inference.jsx    # Main VQA interface
+│   ├── About.jsx        # About page
+│   └── NotFound.jsx     # 404 page
+├── utils/               # Utility functions
+│   ├── api.js           # API communication
+│   ├── animations.js    # Animation presets
+│   ├── session.js       # Session management
+│   └── theme.js         # Theme utilities
+├── App.js               # Main application component
+├── App.css              # Global styles
+├── index.js             # Application entry point
+└── index.css            # TailwindCSS imports and custom utilities
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Connecting to the Backend
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+The frontend is configured to communicate with the backend API at `/api/vqa`.
+You can adjust the proxy settings in `package.json` if needed:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```json
+{
+  "proxy": "http://localhost:8000"
+}
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Building for Production
 
-## Learn More
+To create a production build:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+npm run build
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This will generate optimized static files in the `build` directory that can be
+deployed to any static web hosting service.
 
-### Code Splitting
+## Integration with the VizWiz VQA API
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+This frontend works with the
+[VizWiz VQA API](https://github.com/dixisouls/vizwiz-vqa-api) which provides the
+backend functionality for image analysis and question answering.
 
-### Analyzing the Bundle Size
+## Technologies Used
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- **React**: UI library
+- **React Router**: Page routing
+- **Framer Motion**: Animations
+- **TailwindCSS**: Styling
+- **Axios**: API communication
 
-### Making a Progressive Web App
+## License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+[MIT License](LICENSE)
