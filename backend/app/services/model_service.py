@@ -7,7 +7,7 @@ import logging
 import torch
 from PIL import Image
 from transformers import AutoTokenizer, ViTImageProcessor
-from huggingface_hub import login
+from huggingface_hub import hf_hub_download, login
 
 from app.config import settings
 from app.models.vqa_model import VQAModel
@@ -35,9 +35,49 @@ class ModelService:
             except Exception as e:
                 logger.error(f"Error logging in to Hugging Face Hub: {e}")
     
-    def load_model(self):
-        """Load the VQA model from the specified path"""
+    def _check_model_exists(self):
+        """Check if the model file exists locally"""
+        return os.path.exists(settings.MODEL_PATH)
+    
+    def _download_model_from_hub(self):
+        """Download the model from Hugging Face Hub if not present locally"""
         try:
+            # Create the directory if it doesn't exist
+            os.makedirs(os.path.dirname(settings.MODEL_PATH), exist_ok=True)
+            
+            logger.info(f"Downloading model from {settings.HF_MODEL_REPO} to {settings.MODEL_PATH}")
+            
+            # Download the model file from Hugging Face
+            hf_hub_download(
+                repo_id=settings.HF_MODEL_REPO,
+                filename=settings.HF_MODEL_FILENAME,
+                local_dir=os.path.dirname(settings.MODEL_PATH),
+                local_dir_use_symlinks=False
+            )
+            
+            # Rename the downloaded file to match the expected path if needed
+            downloaded_path = os.path.join(os.path.dirname(settings.MODEL_PATH), settings.HF_MODEL_FILENAME)
+            if downloaded_path != settings.MODEL_PATH:
+                os.rename(downloaded_path, settings.MODEL_PATH)
+                
+            logger.info(f"Model downloaded successfully to {settings.MODEL_PATH}")
+            return True
+        except Exception as e:
+            logger.error(f"Error downloading model from Hugging Face Hub: {e}")
+            return False
+    
+    def load_model(self):
+        """Load the VQA model from the specified path or download it if not present"""
+        try:
+            # Check if model exists locally
+            if not self._check_model_exists():
+                logger.info(f"Model not found at {settings.MODEL_PATH}")
+                
+                # Download the model from Hugging Face Hub
+                if not self._download_model_from_hub():
+                    logger.error("Failed to download model from Hugging Face Hub")
+                    return False
+            
             logger.info(f"Loading model from {settings.MODEL_PATH}")
             checkpoint = torch.load(settings.MODEL_PATH, map_location=self.device)
             

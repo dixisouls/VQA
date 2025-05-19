@@ -21,6 +21,10 @@ class Settings(BaseSettings):
     VISION_MODEL: str = os.getenv("VISION_MODEL", "google/vit-base-patch16-384")
     HUGGINGFACE_TOKEN: str = os.getenv("HUGGINGFACE_TOKEN", "")
     
+    # Hugging Face model repository settings
+    HF_MODEL_REPO: str = os.getenv("HF_MODEL_REPO", "dixisouls/VQA")
+    HF_MODEL_FILENAME: str = os.getenv("HF_MODEL_FILENAME", "model.pt")
+    
     # API settings
     MAX_UPLOAD_SIZE: int = 10 * 1024 * 1024  # 10MB
     
@@ -40,3 +44,6 @@ settings = Settings()
 
 # Ensure upload directory exists
 Path(settings.UPLOAD_DIR).mkdir(parents=True, exist_ok=True)
+
+# Ensure models directory exists
+Path(os.path.dirname(settings.MODEL_PATH)).mkdir(parents=True, exist_ok=True)
