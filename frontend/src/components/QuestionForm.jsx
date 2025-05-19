@@ -8,7 +8,6 @@ const QuestionForm = ({ onSubmitQuestion, disabled, hasImage }) => {
   // Example questions for users to try
   const exampleQuestions = [
     "What color is this object?",
-    "What brand is shown in the image?",
     "How many people are in this picture?",
     "What time does the clock show?",
     "What is written on this label?",
@@ -47,6 +46,9 @@ const QuestionForm = ({ onSubmitQuestion, disabled, hasImage }) => {
     setError("");
   };
 
+  // Disable button if no question or no image
+  const isButtonDisabled = disabled || !hasImage || !question.trim();
+
   return (
     <div className="w-full">
       <form onSubmit={handleSubmit}>
@@ -66,7 +68,7 @@ const QuestionForm = ({ onSubmitQuestion, disabled, hasImage }) => {
             <input
               type="text"
               id="question"
-              className={`input-field ${
+              className={`input-field text-gray-800 dark:text-white ${
                 error ? "border-red-500 dark:border-red-500" : ""
               }`}
               placeholder="e.g., What is in this image?"
@@ -92,11 +94,11 @@ const QuestionForm = ({ onSubmitQuestion, disabled, hasImage }) => {
         <motion.button
           type="submit"
           className="w-full btn btn-primary"
-          disabled={disabled || !hasImage}
-          whileHover={{ scale: disabled ? 1 : 1.02 }}
-          whileTap={{ scale: disabled ? 1 : 0.98 }}
+          disabled={isButtonDisabled}
+          whileHover={{ scale: isButtonDisabled ? 1 : 1.02 }}
+          whileTap={{ scale: isButtonDisabled ? 1 : 0.98 }}
         >
-          {disabled ? "Processing..." : "Ask Question"}
+          Ask Question
         </motion.button>
       </form>
 
