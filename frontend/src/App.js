@@ -7,48 +7,19 @@ import Home from "./pages/Home";
 import Inference from "./pages/Inference";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
-import { initializeTheme, listenForThemeChanges } from "./utils/theme";
 import "./App.css";
 
 function App() {
-  // State for dark mode toggle
-  const [darkMode, setDarkMode] = useState(false);
-
-  // Initialize theme on component mount
+  // Initialize with dark mode
   useEffect(() => {
-    const isDark = initializeTheme();
-    setDarkMode(isDark);
-
-    // Listen for system theme changes
-    const cleanup = listenForThemeChanges((e) => {
-      if (!localStorage.getItem("vizwiz-theme")) {
-        setDarkMode(e.matches);
-        document.documentElement.classList.toggle("dark", e.matches);
-      }
-    });
-
-    return cleanup;
+    // Apply dark mode by default
+    document.documentElement.classList.add("dark");
   }, []);
-
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-
-    // Apply theme
-    if (newDarkMode) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("vizwiz-theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("vizwiz-theme", "light");
-    }
-  };
 
   return (
     <Router>
-      <div className={`min-h-screen flex flex-col ${darkMode ? "dark" : ""}`}>
-        <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      <div className="min-h-screen flex flex-col dark">
+        <Header />
         <main className="flex-grow">
           <AnimatePresence mode="wait">
             <Routes>

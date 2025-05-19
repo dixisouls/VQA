@@ -78,7 +78,7 @@ const Home = () => {
                 Try It Now
               </Link>
               <a
-                href="https://github.com/dixisouls/vizwiz-vqa-api"
+                href="https://github.com/dixisouls/VQA"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-secondary px-8 py-3 text-lg"
