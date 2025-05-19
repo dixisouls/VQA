@@ -4,7 +4,7 @@ import UploadComponent from "../components/UploadComponent";
 import QuestionForm from "../components/QuestionForm";
 import ResultVisualization from "../components/ResultVisualization";
 import LoadingAnimation from "../components/LoadingAnimation";
-import { uploadImage, askQuestion } from "../utils/api";
+import { uploadImage, askQuestion, completeSession } from "../utils/api";
 
 const Inference = () => {
   // Component state
@@ -21,6 +21,20 @@ const Inference = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // Cleanup effect when component unmounts
+  useEffect(() => {
+    // Return cleanup function
+    return () => {
+      if (sessionId) {
+        // Try to complete the session when the component unmounts
+        completeSession(sessionId).catch(() => {
+          // Silent catch - we don't want to crash during unmount
+          console.error("Failed to complete session during cleanup");
+        });
+      }
+    };
+  }, [sessionId]);
 
   // Handle image upload
   const handleImageUpload = async (imageFile) => {
@@ -103,8 +117,25 @@ const Inference = () => {
     }
   };
 
+  // Handle completion - clean up resources but keep UI state
+  const handleCompletion = async () => {
+    if (sessionId) {
+      try {
+        await completeSession(sessionId);
+        console.log("Session resources cleaned up");
+        // We'll keep the session ID and results available for the user
+        // but the server has cleaned up the image
+      } catch (err) {
+        console.error("Error completing session:", err);
+      }
+    }
+  };
+
   // Reset the form
   const handleReset = () => {
+    if (sessionId) {
+      handleCompletion();
+    }
     setSelectedImage(null);
     setSessionId(null);
     setQuestion("");
@@ -221,6 +252,12 @@ const Inference = () => {
                     </button>
                     <button onClick={handleReset} className="btn btn-primary">
                       Start Over
+                    </button>
+                    <button
+                      onClick={handleCompletion}
+                      className="btn btn-secondary ml-4"
+                    >
+                      I'm Done (Clean Up)
                     </button>
                   </div>
                 </div>

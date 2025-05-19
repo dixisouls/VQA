@@ -1,12 +1,9 @@
-"""
-Session management service for VQA application
-"""
 import os
 import uuid
 import logging
 import time
 from datetime import datetime, timedelta
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple, List
 from fastapi import UploadFile
 from pathlib import Path
 
@@ -107,6 +104,37 @@ class SessionService:
         session.update_access_time()
         return session
     
+    def complete_session(self, session_id: str) -> bool:
+        """
+        Mark a session as complete and remove its resources
+        
+        Args:
+            session_id (str): The session ID
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        session = self.sessions.get(session_id)
+        if not session:
+            logger.warning(f"Cannot complete nonexistent session: {session_id}")
+            return False
+        
+        logger.info(f"Completing session {session_id}")
+        
+        try:
+            # Remove the image file but keep session data temporarily for any final operations
+            if session.image_path and os.path.exists(session.image_path):
+                os.remove(session.image_path)
+                logger.info(f"Removed image file for completed session {session.image_path}")
+                
+                # Set the image path to None to indicate it's been removed
+                session.image_path = None
+                return True
+            return True  # No image to remove or already removed
+        except Exception as e:
+            logger.error(f"Error removing image file during session completion: {e}")
+            return False
+    
     def _remove_session(self, session_id: str):
         """
         Remove a session and its associated file
@@ -118,7 +146,7 @@ class SessionService:
         if session:
             try:
                 # Remove the image file
-                if os.path.exists(session.image_path):
+                if session.image_path and os.path.exists(session.image_path):
                     os.remove(session.image_path)
                     logger.info(f"Removed session file {session.image_path}")
             except Exception as e:

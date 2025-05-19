@@ -90,6 +90,21 @@ export const getSession = async (sessionId) => {
 };
 
 /**
+ * Mark a session as complete (cleans up server resources)
+ * @param {string} sessionId - The session ID
+ * @returns {Promise<Object>} - Promise with success message
+ */
+export const completeSession = async (sessionId) => {
+  try {
+    const response = await api.post(`/session/${sessionId}/complete`);
+    return response.data;
+  } catch (error) {
+    console.error("Error completing session:", error);
+    throw error;
+  }
+};
+
+/**
  * Reset (delete) a session
  * @param {string} sessionId - The session ID
  * @returns {Promise<Object>} - Promise with success message
@@ -123,5 +138,6 @@ export default {
   askQuestion,
   getSession,
   resetSession,
+  completeSession,
   checkHealth,
 };
