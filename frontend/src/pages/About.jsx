@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 
 const About = () => {
   const [activeTab, setActiveTab] = useState("overview");
-  const [isAnimating, setIsAnimating] = useState(false);
 
   // Scroll to top on component mount
   useEffect(() => {
@@ -29,16 +28,6 @@ const About = () => {
       y: 0,
       transition: { duration: 0.7, ease: [0.215, 0.61, 0.355, 1] },
     },
-  };
-
-  const handleTabClick = (tab) => {
-    if (tab === activeTab) return;
-
-    setIsAnimating(true);
-    setTimeout(() => {
-      setActiveTab(tab);
-      setIsAnimating(false);
-    }, 300);
   };
 
   // Tech stack items for display
@@ -153,16 +142,6 @@ const About = () => {
     },
   ];
 
-  // Team members (placeholder)
-  const teamMembers = [
-    {
-      name: "AI Research Team",
-      role: "Core Development",
-      photo:
-        "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&q=80",
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-surface-50 dark:bg-surface-900 py-12 md:py-16 lg:py-20 relative">
       {/* Background elements */}
@@ -208,17 +187,14 @@ const About = () => {
           </motion.div>
 
           {/* Tabs Navigation */}
-          <motion.div
-            className="flex flex-wrap justify-center mb-8 border-b border-surface-200 dark:border-surface-700"
-            variants={itemVariants}
-          >
+          <div className="flex flex-wrap justify-center mb-8 border-b border-surface-200 dark:border-surface-700">
             <button
               className={`px-4 py-3 font-medium text-sm transition-colors relative ${
                 activeTab === "overview"
                   ? "text-brand-600 dark:text-brand-400"
                   : "text-surface-600 hover:text-surface-900 dark:text-surface-400 dark:hover:text-surface-200"
               }`}
-              onClick={() => handleTabClick("overview")}
+              onClick={() => setActiveTab("overview")}
             >
               Overview
               {activeTab === "overview" && (
@@ -235,7 +211,7 @@ const About = () => {
                   ? "text-brand-600 dark:text-brand-400"
                   : "text-surface-600 hover:text-surface-900 dark:text-surface-400 dark:hover:text-surface-200"
               }`}
-              onClick={() => handleTabClick("technical")}
+              onClick={() => setActiveTab("technical")}
             >
               Technical Details
               {activeTab === "technical" && (
@@ -246,657 +222,522 @@ const About = () => {
                 />
               )}
             </button>
-            <button
-              className={`px-4 py-3 font-medium text-sm transition-colors relative ${
-                activeTab === "team"
-                  ? "text-brand-600 dark:text-brand-400"
-                  : "text-surface-600 hover:text-surface-900 dark:text-surface-400 dark:hover:text-surface-200"
-              }`}
-              onClick={() => handleTabClick("team")}
-            >
-              Our Team
-              {activeTab === "team" && (
-                <motion.div
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 dark:bg-brand-400"
-                  layoutId="activeTab"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
-            </button>
-          </motion.div>
+          </div>
 
           {/* Tab Content */}
-          <motion.div
-            className={`${
-              isAnimating ? "opacity-0" : "opacity-100"
-            } transition-opacity duration-300`}
-          >
-            {activeTab === "overview" && (
-              <motion.div
-                className="space-y-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <motion.div variants={itemVariants} className="card p-6">
-                  <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
-                    Project Overview
-                  </h2>
-                  <p className="mb-4 text-surface-600 dark:text-surface-300">
-                    VizWiz Visual QA is a cutting-edge application designed to
-                    answer natural language questions about images. Using a
-                    powerful combination of computer vision and natural language
-                    processing models, our system can understand both the visual
-                    content of images and the linguistic nuances of questions.
-                  </p>
-                  <p className="text-surface-600 dark:text-surface-300">
-                    This application was built to demonstrate the capabilities
-                    of modern vision-language models and to provide a practical
-                    tool for image understanding. It leverages state-of-the-art
-                    deep learning architectures including Vision Transformer
-                    (ViT) for image encoding and BERT for text processing.
-                  </p>
-                </motion.div>
+          {activeTab === "overview" && (
+            <div className="space-y-8">
+              <div className="card p-6">
+                <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
+                  Project Overview
+                </h2>
+                <p className="mb-4 text-surface-600 dark:text-surface-300">
+                  VizWiz Visual QA is a cutting-edge application designed to
+                  answer natural language questions about images. Using a
+                  powerful combination of computer vision and natural language
+                  processing models, our system can understand both the visual
+                  content of images and the linguistic nuances of questions.
+                </p>
+                <p className="text-surface-600 dark:text-surface-300">
+                  This application was built to demonstrate the capabilities of
+                  modern vision-language models and to provide a practical tool
+                  for image understanding. It leverages state-of-the-art deep
+                  learning architectures including Vision Transformer (ViT) for
+                  image encoding and BERT for text processing.
+                </p>
+              </div>
 
-                <motion.div variants={itemVariants} className="card p-6">
-                  <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
-                    How It Works
-                  </h2>
+              <div className="card p-6">
+                <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
+                  How It Works
+                </h2>
 
-                  <div className="space-y-6">
-                    <div className="flex flex-col md:flex-row">
-                      <div className="md:w-16 flex-shrink-0 flex items-center justify-center mb-4 md:mb-0">
-                        <div className="w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-brand-600 dark:text-brand-400 font-bold text-lg">
-                          1
-                        </div>
-                      </div>
-                      <div className="md:ml-6">
-                        <h3 className="text-lg font-medium mb-2 text-surface-800 dark:text-white">
-                          Image Processing
-                        </h3>
-                        <p className="text-surface-600 dark:text-surface-300">
-                          When you upload an image, it's processed by our Vision
-                          Transformer (ViT) model, which extracts rich visual
-                          features by analyzing the image as a sequence of
-                          patches. These features capture objects, their
-                          attributes, spatial relationships, and more.
-                        </p>
+                <div className="space-y-6">
+                  <div className="flex flex-col md:flex-row">
+                    <div className="md:w-16 flex-shrink-0 flex items-center justify-center mb-4 md:mb-0">
+                      <div className="w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-brand-600 dark:text-brand-400 font-bold text-lg">
+                        1
                       </div>
                     </div>
-
-                    <div className="flex flex-col md:flex-row">
-                      <div className="md:w-16 flex-shrink-0 flex items-center justify-center mb-4 md:mb-0">
-                        <div className="w-10 h-10 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-accent-600 dark:text-accent-400 font-bold text-lg">
-                          2
-                        </div>
-                      </div>
-                      <div className="md:ml-6">
-                        <h3 className="text-lg font-medium mb-2 text-surface-800 dark:text-white">
-                          Question Analysis
-                        </h3>
-                        <p className="text-surface-600 dark:text-surface-300">
-                          Your question is processed by a BERT language model,
-                          which understands the intent and nuances of your
-                          query. The model parses the question to identify what
-                          information you're looking for in the image.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col md:flex-row">
-                      <div className="md:w-16 flex-shrink-0 flex items-center justify-center mb-4 md:mb-0">
-                        <div className="w-10 h-10 rounded-full bg-tertiary-100 dark:bg-tertiary-900/30 flex items-center justify-center text-tertiary-600 dark:text-tertiary-400 font-bold text-lg">
-                          3
-                        </div>
-                      </div>
-                      <div className="md:ml-6">
-                        <h3 className="text-lg font-medium mb-2 text-surface-800 dark:text-white">
-                          Multimodal Fusion
-                        </h3>
-                        <p className="text-surface-600 dark:text-surface-300">
-                          The system combines the image and question
-                          representations through a sophisticated fusion
-                          mechanism, creating a joint understanding of both the
-                          visual content and the question.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col md:flex-row">
-                      <div className="md:w-16 flex-shrink-0 flex items-center justify-center mb-4 md:mb-0">
-                        <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold text-lg">
-                          4
-                        </div>
-                      </div>
-                      <div className="md:ml-6">
-                        <h3 className="text-lg font-medium mb-2 text-surface-800 dark:text-white">
-                          Answer Generation
-                        </h3>
-                        <p className="text-surface-600 dark:text-surface-300">
-                          Based on the fused understanding, the model generates
-                          an answer to your question and determines whether the
-                          question can be answered from the image. It also
-                          provides confidence scores that indicate how certain
-                          the model is about its predictions.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div variants={itemVariants} className="card p-6">
-                  <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
-                    Key Features
-                  </h2>
-                  <ul className="space-y-3 text-surface-600 dark:text-surface-300">
-                    <li className="flex items-start">
-                      <svg
-                        className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>
-                        Natural language question handling with state-of-the-art
-                        BERT technology
-                      </span>
-                    </li>
-                    <li className="flex items-start">
-                      <svg
-                        className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>
-                        Advanced image analysis using Vision Transformer
-                        architecture
-                      </span>
-                    </li>
-                    <li className="flex items-start">
-                      <svg
-                        className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>
-                        Dual-output architecture that predicts answers and
-                        answer confidence
-                      </span>
-                    </li>
-                    <li className="flex items-start">
-                      <svg
-                        className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>
-                        "Answerability" detection to determine when questions
-                        can't be answered
-                      </span>
-                    </li>
-                    <li className="flex items-start">
-                      <svg
-                        className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>
-                        Interactive UI with real-time confidence visualization
-                      </span>
-                    </li>
-                  </ul>
-                </motion.div>
-              </motion.div>
-            )}
-
-            {activeTab === "technical" && (
-              <motion.div
-                className="space-y-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <motion.div variants={itemVariants} className="card p-6">
-                  <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
-                    Architecture
-                  </h2>
-                  <p className="mb-4 text-surface-600 dark:text-surface-300">
-                    Our system uses a multimodal architecture that processes
-                    both images and text queries:
-                  </p>
-                  <ul className="space-y-3 text-surface-600 dark:text-surface-300">
-                    <li className="flex items-start">
-                      <div className="w-3 h-3 mt-1.5 mr-2 rounded-full bg-brand-500 dark:bg-brand-600 flex-shrink-0"></div>
-                      <div>
-                        <span className="font-medium text-surface-800 dark:text-white">
-                          Vision Encoder:
-                        </span>{" "}
-                        Vision Transformer (ViT) from Google's
-                        ViT-Base-Patch16-384 model
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="w-3 h-3 mt-1.5 mr-2 rounded-full bg-accent-500 dark:bg-accent-600 flex-shrink-0"></div>
-                      <div>
-                        <span className="font-medium text-surface-800 dark:text-white">
-                          Text Encoder:
-                        </span>{" "}
-                        BERT (Bidirectional Encoder Representations from
-                        Transformers)
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="w-3 h-3 mt-1.5 mr-2 rounded-full bg-amber-500 dark:bg-amber-600 flex-shrink-0"></div>
-                      <div>
-                        <span className="font-medium text-surface-800 dark:text-white">
-                          Fusion Mechanism:
-                        </span>{" "}
-                        Cross-modal attention and concatenation with multi-layer
-                        perceptron
-                      </div>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="w-3 h-3 mt-1.5 mr-2 rounded-full bg-emerald-500 dark:bg-emerald-600 flex-shrink-0"></div>
-                      <div>
-                        <span className="font-medium text-surface-800 dark:text-white">
-                          Output Heads:
-                        </span>{" "}
-                        Two specialized classifiers for answer prediction and
-                        answerability determination
-                      </div>
-                    </li>
-                  </ul>
-                </motion.div>
-
-                <motion.div variants={itemVariants} className="card p-6">
-                  <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
-                    Dataset
-                  </h2>
-                  <p className="mb-4 text-surface-600 dark:text-surface-300">
-                    The model was trained on the VizWiz dataset, which contains:
-                  </p>
-                  <ul className="space-y-2 text-surface-600 dark:text-surface-300">
-                    <li className="flex items-start">
-                      <svg
-                        className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>
-                        Over 20,000 images captured by visually impaired
-                        individuals
-                      </span>
-                    </li>
-                    <li className="flex items-start">
-                      <svg
-                        className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>
-                        Natural, conversational questions about these images
-                      </span>
-                    </li>
-                    <li className="flex items-start">
-                      <svg
-                        className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>
-                        Multiple human-provided answers for each question
-                      </span>
-                    </li>
-                    <li className="flex items-start">
-                      <svg
-                        className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>
-                        Annotations indicating whether questions are answerable
-                      </span>
-                    </li>
-                  </ul>
-                </motion.div>
-
-                <motion.div variants={itemVariants} className="card p-6">
-                  <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
-                    Tech Stack
-                  </h2>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
-                    {techStack.map((tech, index) => (
-                      <motion.div
-                        key={tech.name}
-                        className="flex flex-col items-center text-center p-4 rounded-lg bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                      >
-                        <div className={`mb-3 ${tech.color}`}>{tech.icon}</div>
-                        <h3 className="font-medium text-surface-800 dark:text-white mb-1">
-                          {tech.name}
-                        </h3>
-                        <p className="text-xs text-surface-500 dark:text-surface-400">
-                          {tech.description}
-                        </p>
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
-
-                <motion.div variants={itemVariants} className="card p-6">
-                  <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
-                    Performance
-                  </h2>
-                  <p className="mb-4 text-surface-600 dark:text-surface-300">
-                    Our model achieves strong performance on various visual
-                    question answering benchmarks:
-                  </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="p-4 rounded-lg border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
-                      <div className="flex items-center mb-2">
-                        <div className="w-3 h-3 rounded-full bg-emerald-500 mr-2"></div>
-                        <h3 className="font-medium text-surface-800 dark:text-white">
-                          Answer Accuracy
-                        </h3>
-                      </div>
-                      <p className="text-sm text-surface-600 dark:text-surface-300">
-                        High accuracy on answerable questions with excellent
-                        classification of common objects and scenes
-                      </p>
-                    </div>
-                    <div className="p-4 rounded-lg border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
-                      <div className="flex items-center mb-2">
-                        <div className="w-3 h-3 rounded-full bg-amber-500 mr-2"></div>
-                        <h3 className="font-medium text-surface-800 dark:text-white">
-                          Answerability Detection
-                        </h3>
-                      </div>
-                      <p className="text-sm text-surface-600 dark:text-surface-300">
-                        Reliable detection of unanswerable questions to prevent
-                        hallucination and incorrect responses
-                      </p>
-                    </div>
-                    <div className="p-4 rounded-lg border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
-                      <div className="flex items-center mb-2">
-                        <div className="w-3 h-3 rounded-full bg-brand-500 mr-2"></div>
-                        <h3 className="font-medium text-surface-800 dark:text-white">
-                          Real-World Performance
-                        </h3>
-                      </div>
-                      <p className="text-sm text-surface-600 dark:text-surface-300">
-                        Good generalization to real-world images and natural
-                        questions beyond the training data
-                      </p>
-                    </div>
-                    <div className="p-4 rounded-lg border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
-                      <div className="flex items-center mb-2">
-                        <div className="w-3 h-3 rounded-full bg-accent-500 mr-2"></div>
-                        <h3 className="font-medium text-surface-800 dark:text-white">
-                          Inference Speed
-                        </h3>
-                      </div>
-                      <p className="text-sm text-surface-600 dark:text-surface-300">
-                        Fast inference times suitable for interactive use, with
-                        optimized model architecture
+                    <div className="md:ml-6">
+                      <h3 className="text-lg font-medium mb-2 text-surface-800 dark:text-white">
+                        Image Processing
+                      </h3>
+                      <p className="text-surface-600 dark:text-surface-300">
+                        When you upload an image, it's processed by our Vision
+                        Transformer (ViT) model, which extracts rich visual
+                        features by analyzing the image as a sequence of
+                        patches. These features capture objects, their
+                        attributes, spatial relationships, and more.
                       </p>
                     </div>
                   </div>
-                </motion.div>
-              </motion.div>
-            )}
 
-            {activeTab === "team" && (
-              <motion.div
-                className="space-y-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <motion.div variants={itemVariants} className="card p-6">
-                  <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
-                    Our Team
-                  </h2>
-                  <p className="mb-6 text-surface-600 dark:text-surface-300">
-                    This project was developed by dixisouls, a researcher and
-                    developer passionate about AI, computer vision, and natural
-                    language processing.
-                  </p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {teamMembers.map((member, index) => (
-                      <motion.div
-                        key={index}
-                        className="flex flex-col items-center text-center p-6 rounded-lg bg-surface-100 dark:bg-surface-800"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                      >
-                        <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-2 border-brand-500 dark:border-brand-400 p-1">
-                          <img
-                            src={member.photo}
-                            alt={member.name}
-                            className="w-full h-full object-cover rounded-full"
-                          />
-                        </div>
-                        <h3 className="font-medium text-surface-800 dark:text-white text-lg mb-1">
-                          {member.name}
-                        </h3>
-                        <p className="text-sm text-surface-500 dark:text-surface-400 mb-3">
-                          {member.role}
-                        </p>
-                        <div className="flex space-x-3">
-                          <a
-                            href="https://github.com/dixisouls"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-surface-500 hover:text-surface-700 dark:hover:text-surface-300 transition-colors"
-                          >
-                            <svg
-                              className="w-5 h-5"
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                              aria-hidden="true"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-                                clipRule="evenodd"
-                              ></path>
-                            </svg>
-                          </a>
-                          <a
-                            href="https://huggingface.co/dixisouls"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-surface-500 hover:text-surface-700 dark:hover:text-surface-300 transition-colors"
-                          >
-                            <svg
-                              className="w-5 h-5"
-                              viewBox="0 0 24 24"
-                              fill="currentColor"
-                            >
-                              <path d="M11.9999 0C5.37992 0 0 5.37992 0 11.9999C0 18.6199 5.37992 24 11.9999 24C18.6199 24 24 18.6199 24 11.9999C24 5.37992 18.6199 0 11.9999 0ZM9.14449 18.5141C8.34492 18.2264 7.78869 17.5449 7.21148 16.3079C7.13745 16.1442 7.19675 15.9529 7.33793 15.8554C7.47912 15.758 7.67435 15.782 7.79358 15.9118C8.3295 16.5136 8.91361 16.8132 9.47954 16.8132C10.1071 16.8132 10.583 16.4493 10.9321 15.7679C11.0065 15.6115 11.1848 15.5364 11.3526 15.5807C11.5205 15.625 11.6333 15.7795 11.6333 15.9529C11.6333 17.4233 10.8485 18.3222 9.14449 18.5141ZM14.8553 18.5141C13.1514 18.3222 12.3666 17.4233 12.3666 15.9529C12.3666 15.7795 12.4794 15.625 12.6472 15.5807C12.8151 15.5364 12.9934 15.6115 13.0678 15.7679C13.4169 16.4493 13.8928 16.8132 14.5203 16.8132C15.0862 16.8132 15.6703 16.5136 16.2062 15.9118C16.3255 15.782 16.5207 15.758 16.6619 15.8554C16.8031 15.9529 16.8624 16.1442 16.7884 16.3079C16.2112 17.5449 15.6549 18.2264 14.8553 18.5141Z" />
-                            </svg>
-                          </a>
-                        </div>
-                      </motion.div>
-                    ))}
+                  <div className="flex flex-col md:flex-row">
+                    <div className="md:w-16 flex-shrink-0 flex items-center justify-center mb-4 md:mb-0">
+                      <div className="w-10 h-10 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-accent-600 dark:text-accent-400 font-bold text-lg">
+                        2
+                      </div>
+                    </div>
+                    <div className="md:ml-6">
+                      <h3 className="text-lg font-medium mb-2 text-surface-800 dark:text-white">
+                        Question Analysis
+                      </h3>
+                      <p className="text-surface-600 dark:text-surface-300">
+                        Your question is processed by a BERT language model,
+                        which understands the intent and nuances of your query.
+                        The model parses the question to identify what
+                        information you're looking for in the image.
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="mt-8">
-                    <h3 className="text-lg font-medium mb-4 text-surface-800 dark:text-white">
-                      Acknowledgements
-                    </h3>
-                    <p className="text-surface-600 dark:text-surface-300">
-                      This work builds upon research from the broader visual
-                      question answering community, including significant
-                      contributions from academia and industry in
-                      vision-language models, multimodal fusion, and assistive
-                      technologies.
+                  <div className="flex flex-col md:flex-row">
+                    <div className="md:w-16 flex-shrink-0 flex items-center justify-center mb-4 md:mb-0">
+                      <div className="w-10 h-10 rounded-full bg-tertiary-100 dark:bg-tertiary-900/30 flex items-center justify-center text-tertiary-600 dark:text-tertiary-400 font-bold text-lg">
+                        3
+                      </div>
+                    </div>
+                    <div className="md:ml-6">
+                      <h3 className="text-lg font-medium mb-2 text-surface-800 dark:text-white">
+                        Multimodal Fusion
+                      </h3>
+                      <p className="text-surface-600 dark:text-surface-300">
+                        The system combines the image and question
+                        representations through a sophisticated fusion
+                        mechanism, creating a joint understanding of both the
+                        visual content and the question.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col md:flex-row">
+                    <div className="md:w-16 flex-shrink-0 flex items-center justify-center mb-4 md:mb-0">
+                      <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold text-lg">
+                        4
+                      </div>
+                    </div>
+                    <div className="md:ml-6">
+                      <h3 className="text-lg font-medium mb-2 text-surface-800 dark:text-white">
+                        Answer Generation
+                      </h3>
+                      <p className="text-surface-600 dark:text-surface-300">
+                        Based on the fused understanding, the model generates an
+                        answer to your question and determines whether the
+                        question can be answered from the image. It also
+                        provides confidence scores that indicate how certain the
+                        model is about its predictions.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card p-6">
+                <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
+                  Key Features
+                </h2>
+                <ul className="space-y-3 text-surface-600 dark:text-surface-300">
+                  <li className="flex items-start">
+                    <svg
+                      className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>
+                      Natural language question handling with state-of-the-art
+                      BERT technology
+                    </span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg
+                      className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>
+                      Advanced image analysis using Vision Transformer
+                      architecture
+                    </span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg
+                      className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>
+                      Dual-output architecture that predicts answers and answer
+                      confidence
+                    </span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg
+                      className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>
+                      "Answerability" detection to determine when questions
+                      can't be answered
+                    </span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg
+                      className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>
+                      Interactive UI with real-time confidence visualization
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "technical" && (
+            <div className="space-y-8">
+              <div className="card p-6">
+                <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
+                  Architecture
+                </h2>
+                <p className="mb-4 text-surface-600 dark:text-surface-300">
+                  Our system uses a multimodal architecture that processes both
+                  images and text queries:
+                </p>
+                <ul className="space-y-3 text-surface-600 dark:text-surface-300">
+                  <li className="flex items-start">
+                    <div className="w-3 h-3 mt-1.5 mr-2 rounded-full bg-brand-500 dark:bg-brand-600 flex-shrink-0"></div>
+                    <div>
+                      <span className="font-medium text-surface-800 dark:text-white">
+                        Vision Encoder:
+                      </span>{" "}
+                      Vision Transformer (ViT) from Google's
+                      ViT-Base-Patch16-384 model
+                    </div>
+                  </li>
+                  <li className="flex items-start">
+                    <div className="w-3 h-3 mt-1.5 mr-2 rounded-full bg-accent-500 dark:bg-accent-600 flex-shrink-0"></div>
+                    <div>
+                      <span className="font-medium text-surface-800 dark:text-white">
+                        Text Encoder:
+                      </span>{" "}
+                      BERT (Bidirectional Encoder Representations from
+                      Transformers)
+                    </div>
+                  </li>
+                  <li className="flex items-start">
+                    <div className="w-3 h-3 mt-1.5 mr-2 rounded-full bg-amber-500 dark:bg-amber-600 flex-shrink-0"></div>
+                    <div>
+                      <span className="font-medium text-surface-800 dark:text-white">
+                        Fusion Mechanism:
+                      </span>{" "}
+                      Cross-modal attention and concatenation with multi-layer
+                      perceptron
+                    </div>
+                  </li>
+                  <li className="flex items-start">
+                    <div className="w-3 h-3 mt-1.5 mr-2 rounded-full bg-emerald-500 dark:bg-emerald-600 flex-shrink-0"></div>
+                    <div>
+                      <span className="font-medium text-surface-800 dark:text-white">
+                        Output Heads:
+                      </span>{" "}
+                      Two specialized classifiers for answer prediction and
+                      answerability determination
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="card p-6">
+                <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
+                  Dataset
+                </h2>
+                <p className="mb-4 text-surface-600 dark:text-surface-300">
+                  The model was trained on the VizWiz dataset, which contains:
+                </p>
+                <ul className="space-y-2 text-surface-600 dark:text-surface-300">
+                  <li className="flex items-start">
+                    <svg
+                      className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>
+                      Over 20,000 images captured by visually impaired
+                      individuals
+                    </span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg
+                      className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>
+                      Natural, conversational questions about these images
+                    </span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg
+                      className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>
+                      Multiple human-provided answers for each question
+                    </span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg
+                      className="h-5 w-5 mr-2 flex-shrink-0 text-brand-500 dark:text-brand-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>
+                      Annotations indicating whether questions are answerable
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="card p-6">
+                <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
+                  Tech Stack
+                </h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
+                  {techStack.map((tech, index) => (
+                    <div
+                      key={tech.name}
+                      className="flex flex-col items-center text-center p-4 rounded-lg bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+                    >
+                      <div className={`mb-3 ${tech.color}`}>{tech.icon}</div>
+                      <h3 className="font-medium text-surface-800 dark:text-white mb-1">
+                        {tech.name}
+                      </h3>
+                      <p className="text-xs text-surface-500 dark:text-surface-400">
+                        {tech.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="card p-6">
+                <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
+                  Performance
+                </h2>
+                <p className="mb-4 text-surface-600 dark:text-surface-300">
+                  Our model achieves strong performance on various visual
+                  question answering benchmarks:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-4 rounded-lg border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
+                    <div className="flex items-center mb-2">
+                      <div className="w-3 h-3 rounded-full bg-emerald-500 mr-2"></div>
+                      <h3 className="font-medium text-surface-800 dark:text-white">
+                        Answer Accuracy
+                      </h3>
+                    </div>
+                    <p className="text-sm text-surface-600 dark:text-surface-300">
+                      High accuracy on answerable questions with excellent
+                      classification of common objects and scenes
                     </p>
                   </div>
-                </motion.div>
+                  <div className="p-4 rounded-lg border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
+                    <div className="flex items-center mb-2">
+                      <div className="w-3 h-3 rounded-full bg-amber-500 mr-2"></div>
+                      <h3 className="font-medium text-surface-800 dark:text-white">
+                        Answerability Detection
+                      </h3>
+                    </div>
+                    <p className="text-sm text-surface-600 dark:text-surface-300">
+                      Reliable detection of unanswerable questions to prevent
+                      hallucination and incorrect responses
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-lg border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
+                    <div className="flex items-center mb-2">
+                      <div className="w-3 h-3 rounded-full bg-brand-500 mr-2"></div>
+                      <h3 className="font-medium text-surface-800 dark:text-white">
+                        Real-World Performance
+                      </h3>
+                    </div>
+                    <p className="text-sm text-surface-600 dark:text-surface-300">
+                      Good generalization to real-world images and natural
+                      questions beyond the training data
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-lg border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
+                    <div className="flex items-center mb-2">
+                      <div className="w-3 h-3 rounded-full bg-accent-500 mr-2"></div>
+                      <h3 className="font-medium text-surface-800 dark:text-white">
+                        Inference Speed
+                      </h3>
+                    </div>
+                    <p className="text-sm text-surface-600 dark:text-surface-300">
+                      Fast inference times suitable for interactive use, with
+                      optimized model architecture
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-                <motion.div variants={itemVariants} className="card p-6">
-                  <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
-                    Get Involved
-                  </h2>
-                  <p className="mb-4 text-surface-600 dark:text-surface-300">
-                    We welcome contributions from the community to help improve
-                    this project:
-                  </p>
-                  <ul className="space-y-4 text-surface-600 dark:text-surface-300">
-                    <li className="flex">
-                      <div className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 mr-3">
-                        <svg
-                          className="h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"
-                          />
-                        </svg>
-                      </div>
-                      <span>
-                        Fork the repository and submit pull requests with bug
-                        fixes or feature enhancements
-                      </span>
-                    </li>
-                    <li className="flex">
-                      <div className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 mr-3">
-                        <svg
-                          className="h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                          />
-                        </svg>
-                      </div>
-                      <span>
-                        Report issues and suggest improvements by creating
-                        GitHub issues
-                      </span>
-                    </li>
-                    <li className="flex">
-                      <div className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 mr-3">
-                        <svg
-                          className="h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-                          />
-                        </svg>
-                      </div>
-                      <span>
-                        Help improve the model by contributing training data or
-                        annotations
-                      </span>
-                    </li>
-                  </ul>
-                </motion.div>
-              </motion.div>
-            )}
-          </motion.div>
+              <div className="card p-6">
+                <h2 className="text-xl font-semibold mb-4 text-surface-800 dark:text-white">
+                  Implementation Details
+                </h2>
+                <p className="mb-4 text-surface-600 dark:text-surface-300">
+                  The system is implemented as a full-stack application with
+                  clean separation of concerns:
+                </p>
+                <div className="space-y-4">
+                  <div className="flex items-start">
+                    <div className="w-3 h-3 mt-1.5 mr-2 rounded-full bg-blue-500 dark:bg-blue-600 flex-shrink-0"></div>
+                    <div>
+                      <span className="font-medium text-surface-800 dark:text-white">
+                        Backend API:
+                      </span>{" "}
+                      <p className="text-sm text-surface-600 dark:text-surface-300 mt-1">
+                        Built with FastAPI for efficient, type-safe API
+                        endpoints that handle image uploading, session
+                        management, and inference requests. The model service
+                        loads PyTorch models and performs inference
+                        asynchronously.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="w-3 h-3 mt-1.5 mr-2 rounded-full bg-green-500 dark:bg-green-600 flex-shrink-0"></div>
+                    <div>
+                      <span className="font-medium text-surface-800 dark:text-white">
+                        Neural Network:
+                      </span>{" "}
+                      <p className="text-sm text-surface-600 dark:text-surface-300 mt-1">
+                        Implemented in PyTorch with the Hugging Face
+                        Transformers library. Model architecture includes
+                        pre-trained ViT and BERT models with custom fusion
+                        layers and output heads optimized for visual question
+                        answering.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="w-3 h-3 mt-1.5 mr-2 rounded-full bg-purple-500 dark:bg-purple-600 flex-shrink-0"></div>
+                    <div>
+                      <span className="font-medium text-surface-800 dark:text-white">
+                        Frontend Client:
+                      </span>{" "}
+                      <p className="text-sm text-surface-600 dark:text-surface-300 mt-1">
+                        Built with React, TailwindCSS, and Framer Motion for an
+                        engaging and responsive user experience. Features
+                        include real-time confidence visualization, image upload
+                        with preview, and session management.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <div className="w-3 h-3 mt-1.5 mr-2 rounded-full bg-yellow-500 dark:bg-yellow-600 flex-shrink-0"></div>
+                    <div>
+                      <span className="font-medium text-surface-800 dark:text-white">
+                        Optimization Techniques:
+                      </span>{" "}
+                      <p className="text-sm text-surface-600 dark:text-surface-300 mt-1">
+                        The system uses several performance optimizations
+                        including batch processing, model quantization, and
+                        caching strategies to ensure efficient inference even on
+                        limited hardware resources.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Call to Action */}
-          <motion.div className="mt-12 text-center" variants={itemVariants}>
+          <div className="mt-12 text-center">
             <Link
               to="/inference"
               className="btn btn-primary px-8 py-3 text-lg shadow-lg shadow-brand-500/20 dark:shadow-brand-500/10 hover:shadow-xl hover:shadow-brand-500/30 dark:hover:shadow-brand-500/20"
             >
               Try VizWiz Now
             </Link>
-          </motion.div>
+          </div>
         </motion.div>
       </div>
     </div>
