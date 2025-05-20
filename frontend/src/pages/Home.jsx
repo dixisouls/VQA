@@ -279,7 +279,7 @@ const Home = () => {
                 Try It Now
               </Link>
               <a
-                href="https://github.com/dixisouls/vizwiz-vqa-api"
+                href="https://github.com/dixisouls/VQA"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-outline text-base md:text-lg px-8 py-3 rounded-xl flex items-center justify-center"
