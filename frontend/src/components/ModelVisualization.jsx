@@ -54,7 +54,8 @@ const ModelVisualization = () => {
       animate={isInView ? "visible" : "hidden"}
     >
       <div className="relative overflow-auto">
-        <svg ref={svgRef} viewBox="0 0 1000 500" className="w-full h-auto">
+        {/* Increased viewBox width from 1000 to 1100 to ensure output part is visible */}
+        <svg ref={svgRef} viewBox="0 0 1100 500" className="w-full h-auto">
           {/* Background */}
           <defs>
             <pattern
@@ -398,10 +399,10 @@ const ModelVisualization = () => {
             </text>
           </motion.g>
 
-          {/* Output Layers */}
+          {/* Output Layers - Shifted right by 20px */}
           <motion.g variants={itemVariants} className="architecture-node">
             <rect
-              x="900"
+              x="920"
               y="150"
               width="150"
               height="80"
@@ -413,7 +414,7 @@ const ModelVisualization = () => {
               filter="url(#glow)"
             />
             <text
-              x="975"
+              x="995"
               y="175"
               textAnchor="middle"
               fill="#047857"
@@ -423,7 +424,7 @@ const ModelVisualization = () => {
               Answer Classifier
             </text>
             <text
-              x="975"
+              x="995"
               y="195"
               textAnchor="middle"
               fill="#064e3b"
@@ -436,7 +437,7 @@ const ModelVisualization = () => {
 
           <motion.g variants={itemVariants} className="architecture-node">
             <rect
-              x="900"
+              x="920"
               y="270"
               width="150"
               height="80"
@@ -448,7 +449,7 @@ const ModelVisualization = () => {
               filter="url(#glow)"
             />
             <text
-              x="975"
+              x="995"
               y="295"
               textAnchor="middle"
               fill="#b91c1c"
@@ -458,7 +459,7 @@ const ModelVisualization = () => {
               Answerable Classifier
             </text>
             <text
-              x="975"
+              x="995"
               y="315"
               textAnchor="middle"
               fill="#991b1b"
@@ -469,7 +470,7 @@ const ModelVisualization = () => {
             </text>
           </motion.g>
 
-          {/* Connection Lines */}
+          {/* Connection Lines - Updated to match the new positions */}
           {/* Image Flow */}
           <path
             d="M 200 190 L 280 190"
@@ -516,16 +517,16 @@ const ModelVisualization = () => {
             className="architecture-connection"
           />
 
-          {/* Output Flow */}
+          {/* Output Flow - Updated to match the new positions */}
           <path
-            d="M 840 225 L 870 225 L 870 190 L 900 190"
+            d="M 840 225 L 880 225 L 880 190 L 920 190"
             stroke="#10b981"
             strokeWidth="3"
             fill="none"
             className="architecture-connection"
           />
           <path
-            d="M 840 275 L 870 275 L 870 310 L 900 310"
+            d="M 840 275 L 880 275 L 880 310 L 920 310"
             stroke="#ef4444"
             strokeWidth="3"
             fill="none"
@@ -627,7 +628,7 @@ const ModelVisualization = () => {
 
           <motion.g variants={itemVariants}>
             <text
-              x="975"
+              x="995"
               y="130"
               textAnchor="middle"
               fill="#475569"
