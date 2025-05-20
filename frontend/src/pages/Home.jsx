@@ -329,7 +329,7 @@ const Home = () => {
                       </div>
                       <div className="p-3 bg-brand-900/30 rounded-lg backdrop-blur-sm border-l-4 border-brand-500">
                         <span className="font-medium text-brand-200">
-                          A: This appears to be sunset or golden hour.
+                          A: Sunrise
                         </span>
                       </div>
                       <div className="flex justify-between items-center mt-2 text-sm text-surface-400">
@@ -440,7 +440,7 @@ const Home = () => {
                   </div>
                 </div>
 
-                <h3 className="mt-5 text-xl font-semibold text-white">
+                <h3 className="mt-5 text-xl font-semibold text-surface-800 dark:text-white">
                   {feature.title}
                 </h3>
                 <p className="mt-2 text-surface-400">{feature.description}</p>
