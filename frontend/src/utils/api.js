@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Base URL for API requests
-const API_BASE_URL = "/api/vqa";
+const API_BASE_URL = process.env.REACT_APP_API_URL || "/api/vqa";
 
 /**
  * Create a configured Axios instance with error handling
