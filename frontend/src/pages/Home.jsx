@@ -79,7 +79,7 @@ const Home = () => {
     {
       icon: (
         <svg
-          className="w-8 h-8 text-brand-500 dark:text-brand-400"
+          className="w-8 h-8 text-brand-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -101,7 +101,7 @@ const Home = () => {
     {
       icon: (
         <svg
-          className="w-8 h-8 text-accent-500 dark:text-accent-400"
+          className="w-8 h-8 text-accent-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -123,7 +123,7 @@ const Home = () => {
     {
       icon: (
         <svg
-          className="w-8 h-8 text-tertiary-500 dark:text-tertiary-400"
+          className="w-8 h-8 text-tertiary-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -145,7 +145,7 @@ const Home = () => {
     {
       icon: (
         <svg
-          className="w-8 h-8 text-emerald-500 dark:text-emerald-400"
+          className="w-8 h-8 text-emerald-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -167,7 +167,7 @@ const Home = () => {
     {
       icon: (
         <svg
-          className="w-8 h-8 text-amber-500 dark:text-amber-400"
+          className="w-8 h-8 text-amber-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -189,7 +189,7 @@ const Home = () => {
     {
       icon: (
         <svg
-          className="w-8 h-8 text-orange-500 dark:text-orange-400"
+          className="w-8 h-8 text-orange-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -220,7 +220,7 @@ const Home = () => {
         {/* Animated background blobs */}
         <div className="absolute inset-0 -z-10">
           <div
-            className="blob absolute w-96 h-96 bg-gradient-to-r from-brand-300/20 to-brand-500/20 dark:from-brand-500/20 dark:to-brand-700/20 rounded-full top-1/4 -left-48"
+            className="blob absolute w-96 h-96 bg-gradient-to-br from-brand-500/20 to-brand-700/20 rounded-full top-1/4 -left-48"
             style={{
               filter: "blur(70px)",
               transform: isHeroInView
@@ -229,7 +229,7 @@ const Home = () => {
             }}
           />
           <div
-            className="blob absolute w-96 h-96 bg-gradient-to-r from-accent-300/20 to-accent-500/20 dark:from-accent-500/20 dark:to-accent-700/20 rounded-full bottom-1/4 -right-48"
+            className="blob absolute w-96 h-96 bg-gradient-to-tl from-accent-500/20 to-accent-700/20 rounded-full bottom-1/4 -right-48"
             style={{
               filter: "blur(70px)",
               transform: isHeroInView
@@ -248,7 +248,7 @@ const Home = () => {
           >
             <motion.div
               variants={textVariants}
-              className="mb-4 inline-block rounded-full px-3 py-1 text-sm font-medium bg-brand-100 text-brand-800 dark:bg-brand-900/30 dark:text-brand-300"
+              className="mb-4 inline-block rounded-full px-3 py-1 text-sm font-medium bg-brand-900/30 text-brand-300"
             >
               Visual Question Answering
             </motion.div>
@@ -257,10 +257,12 @@ const Home = () => {
               variants={textVariants}
             >
               <span className="gradient-text">Intelligent</span>{" "}
-              <span className="block md:inline">Visual Analysis</span>
+              <span className="block md:inline text-white">
+                Visual Analysis
+              </span>
             </motion.h1>
             <motion.p
-              className="text-xl md:text-2xl text-surface-600 dark:text-surface-300 mb-8 max-w-3xl mx-auto"
+              className="text-xl md:text-2xl text-surface-300 mb-8 max-w-3xl mx-auto"
               variants={textVariants}
             >
               Ask natural questions about images and get AI-powered answers
@@ -272,7 +274,7 @@ const Home = () => {
             >
               <Link
                 to="/inference"
-                className="btn btn-primary text-base md:text-lg px-8 py-3 rounded-xl shadow-lg shadow-brand-500/20 dark:shadow-brand-500/10 hover:shadow-xl hover:shadow-brand-500/30 dark:hover:shadow-brand-500/20 transition-all"
+                className="btn btn-primary text-base md:text-lg px-8 py-3 rounded-xl shadow-lg shadow-brand-500/20 hover:shadow-xl hover:shadow-brand-500/30 transition-all"
               >
                 Try It Now
               </Link>
@@ -310,7 +312,7 @@ const Home = () => {
             >
               <div className="relative max-w-2xl mx-auto">
                 <div className="absolute inset-0 bg-gradient-to-br from-brand-500/20 to-accent-500/20 rounded-xl blur-xl transform -rotate-3 scale-105"></div>
-                <div className="card-glass p-6 rounded-xl border border-white/20 dark:border-white/10 backdrop-blur-xl relative">
+                <div className="card-glass p-6 rounded-xl border border-white/10 backdrop-blur-xl relative">
                   <div className="flex items-start space-x-4">
                     <div className="flex-shrink-0 overflow-hidden rounded-lg w-1/3">
                       <img
@@ -320,19 +322,19 @@ const Home = () => {
                       />
                     </div>
                     <div className="flex-1 space-y-4">
-                      <div className="p-3 bg-white/80 dark:bg-surface-800/80 rounded-lg backdrop-blur-sm">
-                        <span className="font-medium text-surface-800 dark:text-white">
+                      <div className="p-3 bg-surface-800/80 rounded-lg backdrop-blur-sm">
+                        <span className="font-medium text-white">
                           Q: What time of day is shown in this image?
                         </span>
                       </div>
-                      <div className="p-3 bg-brand-50/80 dark:bg-brand-900/30 rounded-lg backdrop-blur-sm border-l-4 border-brand-500">
-                        <span className="font-medium text-brand-800 dark:text-brand-200">
+                      <div className="p-3 bg-brand-900/30 rounded-lg backdrop-blur-sm border-l-4 border-brand-500">
+                        <span className="font-medium text-brand-200">
                           A: This appears to be sunset or golden hour.
                         </span>
                       </div>
-                      <div className="flex justify-between items-center mt-2 text-sm text-surface-500 dark:text-surface-400">
+                      <div className="flex justify-between items-center mt-2 text-sm text-surface-400">
                         <div className="flex items-center">
-                          <div className="w-full h-1.5 bg-surface-200 dark:bg-surface-700 rounded-full overflow-hidden">
+                          <div className="w-full h-1.5 bg-surface-700 rounded-full overflow-hidden">
                             <div className="h-full bg-gradient-to-r from-brand-500 to-brand-600 w-4/5 rounded-full"></div>
                           </div>
                           <span className="ml-2">80% confident</span>
@@ -343,8 +345,8 @@ const Home = () => {
                 </div>
 
                 {/* Decorative elements */}
-                <div className="absolute -top-4 -right-4 w-12 h-12 bg-accent-500/80 dark:bg-accent-600/80 rounded-full blur-lg animate-pulse-subtle"></div>
-                <div className="absolute -bottom-4 -left-4 w-10 h-10 bg-brand-500/80 dark:bg-brand-600/80 rounded-full blur-lg animate-pulse-subtle"></div>
+                <div className="absolute -top-4 -right-4 w-12 h-12 bg-accent-600/80 rounded-full blur-lg animate-pulse-subtle"></div>
+                <div className="absolute -bottom-4 -left-4 w-10 h-10 bg-brand-600/80 rounded-full blur-lg animate-pulse-subtle"></div>
               </div>
             </motion.div>
           </motion.div>
@@ -354,7 +356,7 @@ const Home = () => {
       {/* Features Section */}
       <section
         ref={featuresRef}
-        className="py-20 bg-gradient-to-b from-white to-surface-50 dark:from-surface-900 dark:to-surface-950 relative overflow-hidden"
+        className="py-20 bg-gradient-to-b from-surface-900 to-surface-950 relative overflow-hidden"
       >
         <div className="absolute inset-0 dot-bg opacity-50"></div>
         <div className="container mx-auto px-4 relative z-10">
@@ -365,7 +367,7 @@ const Home = () => {
                 isFeaturesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
               }
               transition={{ duration: 0.6 }}
-              className="mb-3 inline-block rounded-full px-3 py-1 text-sm font-medium bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-300"
+              className="mb-3 inline-block rounded-full px-3 py-1 text-sm font-medium bg-accent-900/30 text-accent-300"
             >
               Capabilities
             </motion.div>
@@ -375,7 +377,7 @@ const Home = () => {
                 isFeaturesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
               }
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-3xl md:text-4xl font-display font-bold mb-6"
+              className="text-3xl md:text-4xl font-display font-bold mb-6 text-white"
             >
               Advanced Features
             </motion.h2>
@@ -385,7 +387,7 @@ const Home = () => {
                 isFeaturesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
               }
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg text-surface-600 dark:text-surface-300"
+              className="text-lg text-surface-300"
             >
               Our visual question answering system combines computer vision and
               natural language processing to extract meaningful information from
@@ -408,7 +410,7 @@ const Home = () => {
                 }}
               >
                 <div
-                  className="absolute inset-0 bg-gradient-to-br dark:opacity-10 opacity-0 group-hover:opacity-10 dark:group-hover:opacity-20 transition-opacity duration-500 -z-10 rounded-xl"
+                  className="absolute inset-0 bg-gradient-to-br opacity-10 group-hover:opacity-20 transition-opacity duration-500 -z-10 rounded-xl"
                   style={{
                     background: `linear-gradient(to bottom right, var(--tw-gradient-stops))`,
                     "--tw-gradient-from": feature.color
@@ -433,15 +435,15 @@ const Home = () => {
                         .split("-")[1],
                     }}
                   ></div>
-                  <div className="relative p-2 bg-white dark:bg-surface-800 rounded-lg w-14 h-14 flex items-center justify-center">
+                  <div className="relative p-2 bg-surface-800 rounded-lg w-14 h-14 flex items-center justify-center">
                     {feature.icon}
                   </div>
                 </div>
 
-                <h3 className="mt-5 text-xl font-semibold">{feature.title}</h3>
-                <p className="mt-2 text-surface-600 dark:text-surface-400">
-                  {feature.description}
-                </p>
+                <h3 className="mt-5 text-xl font-semibold text-white">
+                  {feature.title}
+                </h3>
+                <p className="mt-2 text-surface-400">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -451,7 +453,7 @@ const Home = () => {
       {/* Model Architecture Section */}
       <section
         ref={architectureRef}
-        className="py-20 bg-surface-50 dark:bg-surface-900 relative overflow-hidden"
+        className="py-20 bg-surface-900 relative overflow-hidden"
       >
         <div className="absolute inset-0 mesh-bg opacity-40"></div>
         <div className="container mx-auto px-4 relative z-10">
@@ -464,7 +466,7 @@ const Home = () => {
                   : { opacity: 0, y: 20 }
               }
               transition={{ duration: 0.6 }}
-              className="mb-3 inline-block rounded-full px-3 py-1 text-sm font-medium bg-brand-100 text-brand-800 dark:bg-brand-900/30 dark:text-brand-300"
+              className="mb-3 inline-block rounded-full px-3 py-1 text-sm font-medium bg-brand-900/30 text-brand-300"
             >
               Technology
             </motion.div>
@@ -476,7 +478,7 @@ const Home = () => {
                   : { opacity: 0, y: 20 }
               }
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-3xl md:text-4xl font-display font-bold mb-6"
+              className="text-3xl md:text-4xl font-display font-bold mb-6 text-white"
             >
               Model Architecture
             </motion.h2>
@@ -488,7 +490,7 @@ const Home = () => {
                   : { opacity: 0, y: 20 }
               }
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg text-surface-600 dark:text-surface-300"
+              className="text-lg text-surface-300"
             >
               Our visual question answering model combines vision and language
               understanding for accurate and reliable results.
@@ -510,7 +512,7 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-brand-500 to-accent-600 dark:from-brand-600 dark:to-accent-700 text-white relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-brand-600 to-accent-700 text-white relative overflow-hidden">
         <div className="absolute inset-0 dot-bg opacity-10"></div>
         <div
           className="absolute inset-0"
