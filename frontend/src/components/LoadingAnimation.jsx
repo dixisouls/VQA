@@ -1,119 +1,282 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-const LoadingAnimation = ({ text = "Processing", size = "medium" }) => {
+const LoadingAnimation = ({
+  size = "medium",
+  text = "Loading",
+  theme = "brand",
+}) => {
   // Size configurations
   const sizes = {
     small: {
-      containerSize: "w-6 h-6",
-      textClass: "text-sm mt-2",
-      circleSize: 3,
+      outer: "w-16 h-16",
+      inner: "w-10 h-10",
+      text: "text-sm mt-2",
+      stroke: 1.5,
     },
     medium: {
-      containerSize: "w-12 h-12",
-      textClass: "text-base mt-3",
-      circleSize: 5,
+      outer: "w-24 h-24",
+      inner: "w-16 h-16",
+      text: "text-base mt-3",
+      stroke: 2,
     },
     large: {
-      containerSize: "w-16 h-16",
-      textClass: "text-lg mt-4",
-      circleSize: 7,
+      outer: "w-32 h-32",
+      inner: "w-20 h-20",
+      text: "text-lg mt-4",
+      stroke: 2.5,
     },
   };
 
-  const currentSize = sizes[size] || sizes.medium;
-
-  // Circle variants for animation
-  const circleVariants = {
-    initial: { opacity: 0, y: 0 },
-    animate: (i) => ({
-      opacity: [0.5, 1, 0.5],
-      y: [0, -10, 0],
-      transition: {
-        duration: 1.2,
-        repeat: Infinity,
-        delay: i * 0.2,
-      },
-    }),
-  };
-
-  // Brain pulse animation for VQA concept
-  const brainVariants = {
-    initial: { scale: 1, opacity: 0.7 },
-    animate: {
-      scale: [1, 1.1, 1],
-      opacity: [0.7, 1, 0.7],
-      transition: {
-        duration: 2,
-        repeat: Infinity,
-        ease: "easeInOut",
-      },
+  // Theme configurations
+  const themes = {
+    brand: {
+      outer: "text-brand-500 dark:text-brand-400",
+      inner: "text-brand-400 dark:text-brand-500",
+      text: "text-brand-600 dark:text-brand-400",
+      gradient: "from-brand-400 to-brand-600",
+    },
+    accent: {
+      outer: "text-accent-500 dark:text-accent-400",
+      inner: "text-accent-400 dark:text-accent-500",
+      text: "text-accent-600 dark:text-accent-400",
+      gradient: "from-accent-400 to-accent-600",
+    },
+    tertiary: {
+      outer: "text-tertiary-500 dark:text-tertiary-400",
+      inner: "text-tertiary-400 dark:text-tertiary-500",
+      text: "text-tertiary-600 dark:text-tertiary-400",
+      gradient: "from-tertiary-400 to-tertiary-600",
+    },
+    neutral: {
+      outer: "text-surface-500 dark:text-surface-400",
+      inner: "text-surface-400 dark:text-surface-500",
+      text: "text-surface-600 dark:text-surface-400",
+      gradient: "from-surface-400 to-surface-600",
     },
   };
 
-  // Text animation
-  const textVariants = {
-    initial: { opacity: 0 },
-    animate: {
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        delay: 0.5,
-      },
-    },
-  };
+  const sizeConfig = sizes[size] || sizes.medium;
+  const themeConfig = themes[theme] || themes.brand;
 
   return (
     <div className="flex flex-col items-center justify-center">
+      {/* AI-themed loading animation - resembles a processing brain */}
       <div className="relative">
-        {/* Brain icon (represents visual reasoning) */}
+        {/* Animated background glow */}
         <motion.div
-          className="absolute inset-0 flex items-center justify-center"
-          variants={brainVariants}
-          initial="initial"
-          animate="animate"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={`${currentSize.containerSize} text-primary-600 dark:text-primary-400`}
-          >
-            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z" />
-            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z" />
-          </svg>
-        </motion.div>
+          className={`absolute inset-0 rounded-full bg-gradient-to-r ${themeConfig.gradient} blur-xl opacity-20`}
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.3, 0.2],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+        />
 
-        {/* Three circle indicators showing activity */}
-        <div
-          className={`flex items-center justify-center space-x-2 ${currentSize.containerSize}`}
-        >
-          {[0, 1, 2].map((i) => (
-            <motion.div
-              key={i}
-              custom={i}
-              variants={circleVariants}
-              initial="initial"
-              animate="animate"
-              className={`w-${currentSize.circleSize} h-${currentSize.circleSize} bg-primary-600 dark:bg-primary-400 rounded-full`}
+        {/* Outer rotating circle */}
+        <div className={`relative ${sizeConfig.outer}`}>
+          <svg className="w-full h-full" viewBox="0 0 100 100">
+            {/* Circular track */}
+            <circle
+              cx="50"
+              cy="50"
+              r="45"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={sizeConfig.stroke}
+              strokeOpacity="0.1"
+              strokeDasharray="1,3"
+              strokeLinecap="round"
             />
-          ))}
+
+            {/* Rotating segment */}
+            <motion.circle
+              cx="50"
+              cy="50"
+              r="45"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={sizeConfig.stroke}
+              strokeLinecap="round"
+              strokeDasharray="60 200"
+              initial={{ rotate: 0, strokeDashoffset: 0 }}
+              animate={{
+                rotate: 360,
+                strokeDashoffset: [0, 100, 0],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+              style={{ transformOrigin: "center" }}
+              className={themeConfig.outer}
+            />
+
+            {/* Counter-rotating segment */}
+            <motion.circle
+              cx="50"
+              cy="50"
+              r="45"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={sizeConfig.stroke}
+              strokeLinecap="round"
+              strokeDasharray="40 220"
+              initial={{ rotate: 0 }}
+              animate={{ rotate: -360 }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+              style={{ transformOrigin: "center" }}
+              className={themeConfig.outer}
+            />
+          </svg>
+
+          {/* Inner neural network visualization */}
+          <div
+            className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${sizeConfig.inner}`}
+          >
+            <svg className="w-full h-full" viewBox="0 0 100 100">
+              {/* Central node */}
+              <motion.circle
+                cx="50"
+                cy="50"
+                r="8"
+                fill="currentColor"
+                animate={{
+                  r: [8, 10, 8],
+                  opacity: [0.7, 1, 0.7],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                }}
+                className={themeConfig.inner}
+              />
+
+              {/* Neural connections */}
+              {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => {
+                const x2 = 50 + 35 * Math.cos((angle * Math.PI) / 180);
+                const y2 = 50 + 35 * Math.sin((angle * Math.PI) / 180);
+                return (
+                  <React.Fragment key={i}>
+                    {/* Connection line */}
+                    <motion.line
+                      x1="50"
+                      y1="50"
+                      x2={x2}
+                      y2={y2}
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeOpacity="0.5"
+                      animate={{
+                        strokeOpacity: [0.2, 0.8, 0.2],
+                      }}
+                      transition={{
+                        duration: 1.5 + i * 0.2,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                      }}
+                      className={themeConfig.inner}
+                    />
+
+                    {/* Outer node */}
+                    <motion.circle
+                      cx={x2}
+                      cy={y2}
+                      r="3"
+                      fill="currentColor"
+                      animate={{
+                        r: [3, 4, 3],
+                        opacity: [0.5, 1, 0.5],
+                      }}
+                      transition={{
+                        duration: 1 + i * 0.15,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        delay: i * 0.05,
+                      }}
+                      className={themeConfig.inner}
+                    />
+                  </React.Fragment>
+                );
+              })}
+
+              {/* Data pulse animation */}
+              {[0, 90, 180, 270].map((angle, i) => {
+                const path = `M 50 50 L ${
+                  50 + 35 * Math.cos((angle * Math.PI) / 180)
+                } ${50 + 35 * Math.sin((angle * Math.PI) / 180)}`;
+                return (
+                  <motion.circle
+                    key={`pulse-${i}`}
+                    cx="50"
+                    cy="50"
+                    r="2"
+                    fill="currentColor"
+                    className={themeConfig.inner}
+                    animate={{
+                      cx: [50, 50 + 35 * Math.cos((angle * Math.PI) / 180)],
+                      cy: [50, 50 + 35 * Math.sin((angle * Math.PI) / 180)],
+                      opacity: [1, 0],
+                      r: [2, 0],
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      delay: i * 0.75,
+                      ease: "easeOut",
+                    }}
+                  />
+                );
+              })}
+            </svg>
+          </div>
         </div>
       </div>
 
-      {/* Loading text */}
-      <motion.div
-        variants={textVariants}
-        initial="initial"
-        animate="animate"
-        className={`${currentSize.textClass} text-gray-700 dark:text-gray-300`}
-      >
-        {text}
-      </motion.div>
+      {/* Text */}
+      {text && (
+        <motion.div
+          className={`${sizeConfig.text} font-medium ${themeConfig.text}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          <div className="flex items-center">
+            <span>{text}</span>
+            <motion.span
+              animate={{ opacity: [0, 1, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="ml-1"
+            >
+              .
+            </motion.span>
+            <motion.span
+              animate={{ opacity: [0, 1, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
+              className="ml-0.5"
+            >
+              .
+            </motion.span>
+            <motion.span
+              animate={{ opacity: [0, 1, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
+              className="ml-0.5"
+            >
+              .
+            </motion.span>
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 };

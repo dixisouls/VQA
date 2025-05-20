@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useAnimation } from "framer-motion";
+import { uploadImage, askQuestion, completeSession } from "../utils/api";
 import UploadComponent from "../components/UploadComponent";
 import QuestionForm from "../components/QuestionForm";
 import ResultVisualization from "../components/ResultVisualization";
-import LoadingAnimation from "../components/LoadingAnimation";
-import { uploadImage, askQuestion, completeSession } from "../utils/api";
 
 const Inference = () => {
   // Component state
@@ -16,25 +15,98 @@ const Inference = () => {
   const [uploadLoading, setUploadLoading] = useState(false);
   const [error, setError] = useState("");
   const [history, setHistory] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [cameraEffect, setCameraEffect] = useState(false);
+
+  // Refs
+  const resultSectionRef = useRef(null);
+
+  // Animations
+  const stepOneControls = useAnimation();
+  const stepTwoControls = useAnimation();
+  const stepThreeControls = useAnimation();
+  const cameraMaskControls = useAnimation();
 
   // Scroll to top on component mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  // Update steps animation states
+  useEffect(() => {
+    if (currentStep >= 1) {
+      stepOneControls.start({
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { duration: 0.5, ease: [0.215, 0.61, 0.355, 1] },
+      });
+    } else {
+      stepOneControls.start({
+        opacity: 0.7,
+        scale: 0.98,
+        transition: { duration: 0.5 },
+      });
+    }
+
+    if (currentStep >= 2) {
+      stepTwoControls.start({
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { duration: 0.5, ease: [0.215, 0.61, 0.355, 1] },
+      });
+    } else {
+      stepTwoControls.start({
+        opacity: 0.5,
+        y: 20,
+        scale: 0.98,
+        transition: { duration: 0.5 },
+      });
+    }
+
+    if (currentStep >= 3) {
+      stepThreeControls.start({
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { duration: 0.5, ease: [0.215, 0.61, 0.355, 1] },
+      });
+    } else {
+      stepThreeControls.start({
+        opacity: 0.5,
+        y: 20,
+        scale: 0.98,
+        transition: { duration: 0.5 },
+      });
+    }
+  }, [currentStep, stepOneControls, stepTwoControls, stepThreeControls]);
+
   // Cleanup effect when component unmounts
   useEffect(() => {
-    // Return cleanup function
     return () => {
       if (sessionId) {
         // Try to complete the session when the component unmounts
         completeSession(sessionId).catch(() => {
-          // Silent catch - we don't want to crash during unmount
           console.error("Failed to complete session during cleanup");
         });
       }
     };
   }, [sessionId]);
+
+  // Scroll to results when they appear
+  useEffect(() => {
+    if (result && resultSectionRef.current) {
+      // Add a small delay to ensure animations have started
+      setTimeout(() => {
+        resultSectionRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 300);
+    }
+  }, [result]);
 
   // Handle image upload
   const handleImageUpload = async (imageFile) => {
@@ -44,6 +116,7 @@ const Inference = () => {
     setResult(null);
     setError("");
     setHistory([]);
+    setCurrentStep(1);
 
     // If imageFile is null, the user has cleared the selection
     if (!imageFile) {
@@ -57,9 +130,22 @@ const Inference = () => {
     try {
       // Upload the image to create a new session
       console.log("Uploading image:", imageFile.name);
+
+      // Trigger the camera shutter effect
+      setCameraEffect(true);
+      await cameraMaskControls.start({
+        clipPath: ["circle(0% at center)", "circle(150% at center)"],
+        opacity: [1, 0],
+        transition: { duration: 0.8, ease: "easeInOut" },
+      });
+      setCameraEffect(false);
+
       const response = await uploadImage(imageFile);
       console.log("Upload successful, session ID:", response.session_id);
       setSessionId(response.session_id);
+
+      // Move to step 2 after successful upload
+      setCurrentStep(2);
     } catch (err) {
       console.error("Error uploading image:", err);
       setError(
@@ -105,6 +191,9 @@ const Inference = () => {
           timestamp: new Date().toISOString(),
         },
       ]);
+
+      // Move to step 3 after getting results
+      setCurrentStep(3);
     } catch (err) {
       console.error("Error asking question:", err);
       setError(
@@ -142,79 +231,201 @@ const Inference = () => {
     setResult(null);
     setError("");
     setHistory([]);
+    setCurrentStep(1);
   };
 
-  // Animation variants
-  const pageVariants = {
-    initial: { opacity: 0 },
-    animate: { opacity: 1, transition: { duration: 0.5 } },
-    exit: { opacity: 0, transition: { duration: 0.3 } },
+  // Toggle history visibility
+  const toggleHistory = () => {
+    setShowHistory(!showHistory);
   };
 
+  // Ask a new question (clear just the result)
+  const askNewQuestion = () => {
+    setResult(null);
+    setCurrentStep(2);
+  };
+
+  // Container animation variants
   const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      y: 0,
       transition: {
-        duration: 0.5,
-        staggerChildren: 0.1,
+        delayChildren: 0.3,
+        staggerChildren: 0.2,
       },
     },
   };
 
   return (
-    <motion.div
-      className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12"
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-    >
-      <div className="container px-4 mx-auto">
+    <div className="min-h-screen bg-surface-50 dark:bg-surface-900 py-12 md:py-16 lg:py-20 relative">
+      {/* Background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-1/3 h-1/3 bg-gradient-to-br from-brand-400/10 to-brand-600/5 dark:from-brand-400/5 dark:to-brand-600/10 blur-3xl rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-gradient-to-tl from-accent-400/10 to-accent-600/5 dark:from-accent-400/5 dark:to-accent-600/10 blur-3xl rounded-full transform translate-x-1/3 translate-y-1/4"></div>
+        <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-tertiary-400/5 dark:bg-tertiary-600/5 blur-3xl rounded-full"></div>
+      </div>
+
+      {/* Camera shutter effect */}
+      <AnimatePresence>
+        {cameraEffect && (
+          <motion.div
+            className="fixed inset-0 bg-black z-50 pointer-events-none"
+            initial={{ clipPath: "circle(0% at center)" }}
+            animate={cameraMaskControls}
+            exit={{ clipPath: "circle(0% at center)", opacity: 0 }}
+          />
+        )}
+      </AnimatePresence>
+
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div
           className="max-w-4xl mx-auto"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
-              Visual Question Answering
-            </h1>
-            <p className="text-lg text-gray-700 dark:text-gray-300">
-              Upload an image and ask questions to get AI-powered answers
-            </p>
+          <div className="text-center mb-12">
+            <motion.h1
+              className="text-3xl md:text-4xl font-display font-bold mb-4"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="gradient-text">Visual</span> Question Answering
+            </motion.h1>
+            <motion.p
+              className="text-lg text-surface-600 dark:text-surface-300 max-w-2xl mx-auto"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              Upload an image and ask questions to get AI-powered answers about
+              the visual content
+            </motion.p>
           </div>
 
-          {/* Main card container */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-            <div className="p-6">
-              {/* Upload section */}
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
-                  1. Upload Your Image
-                </h2>
+          {/* Step indicators */}
+          <div className="flex justify-center mb-12">
+            <div className="flex items-center space-x-4">
+              <motion.div
+                className={`flex items-center justify-center w-10 h-10 rounded-full font-medium ${
+                  currentStep >= 1
+                    ? "bg-brand-500 text-white"
+                    : "bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300"
+                }`}
+                animate={{
+                  scale: currentStep === 1 ? [1, 1.1, 1] : 1,
+                  transition: {
+                    duration: 0.5,
+                    repeat: currentStep === 1 ? Infinity : 0,
+                    repeatType: "reverse",
+                  },
+                }}
+              >
+                1
+              </motion.div>
+              <div
+                className={`h-1 w-10 rounded ${
+                  currentStep >= 2
+                    ? "bg-brand-500"
+                    : "bg-surface-200 dark:bg-surface-700"
+                }`}
+              ></div>
+              <motion.div
+                className={`flex items-center justify-center w-10 h-10 rounded-full font-medium ${
+                  currentStep >= 2
+                    ? "bg-brand-500 text-white"
+                    : "bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300"
+                }`}
+                animate={{
+                  scale: currentStep === 2 ? [1, 1.1, 1] : 1,
+                  transition: {
+                    duration: 0.5,
+                    repeat: currentStep === 2 ? Infinity : 0,
+                    repeatType: "reverse",
+                  },
+                }}
+              >
+                2
+              </motion.div>
+              <div
+                className={`h-1 w-10 rounded ${
+                  currentStep >= 3
+                    ? "bg-brand-500"
+                    : "bg-surface-200 dark:bg-surface-700"
+                }`}
+              ></div>
+              <motion.div
+                className={`flex items-center justify-center w-10 h-10 rounded-full font-medium ${
+                  currentStep >= 3
+                    ? "bg-brand-500 text-white"
+                    : "bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-300"
+                }`}
+                animate={{
+                  scale: currentStep === 3 ? [1, 1.1, 1] : 1,
+                  transition: {
+                    duration: 0.5,
+                    repeat: currentStep === 3 ? Infinity : 0,
+                    repeatType: "reverse",
+                  },
+                }}
+              >
+                3
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Main container */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-8">
+            {/* Left panel - Upload and Question */}
+            <div className="md:col-span-2 space-y-6">
+              {/* Step 1: Upload Section */}
+              <motion.div
+                animate={stepOneControls}
+                initial={{ opacity: 0, y: 20 }}
+                className="card p-6"
+              >
+                <div className="flex items-center mb-4">
+                  <div
+                    className={`mr-3 flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
+                      currentStep >= 1
+                        ? "bg-brand-100 text-brand-800 dark:bg-brand-900/30 dark:text-brand-300"
+                        : "bg-surface-100 text-surface-500 dark:bg-surface-800 dark:text-surface-400"
+                    }`}
+                  >
+                    1
+                  </div>
+                  <h2 className="text-xl font-semibold text-surface-800 dark:text-white">
+                    Upload Your Image
+                  </h2>
+                </div>
                 <UploadComponent
                   onImageUpload={handleImageUpload}
                   loading={uploadLoading}
                 />
+              </motion.div>
 
-                {uploadLoading && (
-                  <div className="mt-4 flex justify-center">
-                    <LoadingAnimation text="Uploading image..." size="small" />
+              {/* Step 2: Question Section */}
+              <motion.div
+                animate={stepTwoControls}
+                initial={{ opacity: 0.5, y: 20 }}
+                className="card p-6"
+              >
+                <div className="flex items-center mb-4">
+                  <div
+                    className={`mr-3 flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
+                      currentStep >= 2
+                        ? "bg-brand-100 text-brand-800 dark:bg-brand-900/30 dark:text-brand-300"
+                        : "bg-surface-100 text-surface-500 dark:bg-surface-800 dark:text-surface-400"
+                    }`}
+                  >
+                    2
                   </div>
-                )}
-              </div>
-
-              {/* Divider */}
-              <div className="border-t border-gray-200 dark:border-gray-700 my-6"></div>
-
-              {/* Question section */}
-              <div className="mb-8">
-                <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
-                  2. Ask a Question
-                </h2>
+                  <h2 className="text-xl font-semibold text-surface-800 dark:text-white">
+                    Ask a Question
+                  </h2>
+                </div>
                 <QuestionForm
                   onSubmitQuestion={handleSubmitQuestion}
                   disabled={loading || !sessionId}
@@ -223,82 +434,296 @@ const Inference = () => {
 
                 {loading && (
                   <div className="mt-8 flex justify-center">
-                    <LoadingAnimation text="Analyzing image and question..." />
+                    <div className="flex flex-col items-center p-6">
+                      <div className="relative w-16 h-16">
+                        <div className="absolute inset-0 rounded-full border-4 border-t-brand-500 border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
+                        <div className="absolute inset-0 rounded-full border-4 border-t-transparent border-r-accent-500 border-b-transparent border-l-transparent animate-spin-slow"></div>
+                      </div>
+                      <p className="mt-4 text-surface-600 dark:text-surface-400 font-medium">
+                        Analyzing image and question...
+                      </p>
+                    </div>
                   </div>
                 )}
-              </div>
+              </motion.div>
 
-              {/* Error message */}
-              {error && (
-                <div className="mb-8 p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg">
-                  <p>{error}</p>
-                </div>
-              )}
-
-              {/* Result section */}
-              {result && !loading && (
-                <div className="mb-8">
-                  <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
-                    3. Results
-                  </h2>
-                  <ResultVisualization result={result} question={question} />
-
-                  <div className="mt-6 text-center">
-                    <button
-                      onClick={() => setResult(null)}
-                      className="btn btn-secondary mr-4"
-                    >
-                      Ask Another Question
-                    </button>
-                    <button onClick={handleReset} className="btn btn-primary">
-                      Start Over
-                    </button>
-                    <button
-                      onClick={handleCompletion}
-                      className="btn btn-secondary ml-4"
-                    >
-                      I'm Done (Clean Up)
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Question History */}
+              {/* History Section (conditionally shown) */}
               {history.length > 0 && (
-                <div className="mt-8">
-                  <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
-                    Question History
-                  </h2>
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                    {history.map((item, index) => (
-                      <div
-                        key={index}
-                        className={`p-3 ${
-                          index !== history.length - 1
-                            ? "border-b border-gray-200 dark:border-gray-600"
-                            : ""
-                        }`}
+                <motion.div
+                  className="card p-6"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-medium text-surface-800 dark:text-white">
+                      Question History
+                    </h3>
+                    <button
+                      onClick={toggleHistory}
+                      className="p-1.5 text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200 rounded-full hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
                       >
-                        <p className="font-medium text-gray-800 dark:text-white">
-                          Q: {item.question}
-                        </p>
-                        <p className="text-gray-700 dark:text-gray-300">
-                          A: {item.result.answer}
-                          <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
-                            (Confidence:{" "}
-                            {(item.result.answer_confidence * 100).toFixed(1)}%)
-                          </span>
-                        </p>
-                      </div>
-                    ))}
+                        {showHistory ? (
+                          <path
+                            fillRule="evenodd"
+                            d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+                            clipRule="evenodd"
+                          />
+                        ) : (
+                          <path
+                            fillRule="evenodd"
+                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                            clipRule="evenodd"
+                          />
+                        )}
+                      </svg>
+                    </button>
                   </div>
-                </div>
+
+                  <AnimatePresence>
+                    {showHistory && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-3 max-h-64 overflow-y-auto pr-1 custom-scrollbar"
+                      >
+                        {history.map((item, index) => (
+                          <motion.div
+                            key={index}
+                            className="p-3 rounded-lg bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors cursor-pointer"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            onClick={() => {
+                              setQuestion(item.question);
+                              setResult(item.result);
+                              setCurrentStep(3);
+                            }}
+                          >
+                            <div className="flex items-start">
+                              <div className="flex-shrink-0 text-brand-500 dark:text-brand-400 mt-1">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="h-4 w-4"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  />
+                                </svg>
+                              </div>
+                              <div className="ml-2">
+                                <p className="text-sm font-medium text-surface-800 dark:text-white">
+                                  {item.question}
+                                </p>
+                                <p className="text-xs text-surface-600 dark:text-surface-400 mt-1 line-clamp-1">
+                                  {item.result.answer}
+                                </p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
               )}
+            </div>
+
+            {/* Right panel - Results */}
+            <div className="md:col-span-3">
+              <motion.div
+                ref={resultSectionRef}
+                animate={stepThreeControls}
+                initial={{ opacity: 0.5, y: 20 }}
+              >
+                {/* Step 3: Results Section */}
+                <div className="sticky top-24">
+                  <div className="mb-4 flex items-center">
+                    <div
+                      className={`mr-3 flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
+                        currentStep >= 3
+                          ? "bg-brand-100 text-brand-800 dark:bg-brand-900/30 dark:text-brand-300"
+                          : "bg-surface-100 text-surface-500 dark:bg-surface-800 dark:text-surface-400"
+                      }`}
+                    >
+                      3
+                    </div>
+                    <h2 className="text-xl font-semibold text-surface-800 dark:text-white">
+                      View Results
+                    </h2>
+                  </div>
+
+                  <AnimatePresence>
+                    {error && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                        className="mb-6 p-4 bg-tertiary-50 dark:bg-tertiary-900/20 border border-tertiary-200 dark:border-tertiary-800 rounded-lg text-tertiary-700 dark:text-tertiary-300"
+                      >
+                        <div className="flex">
+                          <svg
+                            className="h-5 w-5 mr-2 flex-shrink-0"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          <p>{error}</p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <AnimatePresence>
+                    {result ? (
+                      <ResultVisualization
+                        result={result}
+                        question={question}
+                      />
+                    ) : !error && currentStep < 3 ? (
+                      <motion.div
+                        className="card p-8 h-full flex flex-col items-center justify-center text-center min-h-[400px]"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                      >
+                        <div className="w-24 h-24 mb-6 text-surface-300 dark:text-surface-600">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={1.5}
+                              d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                        </div>
+                        <h3 className="text-xl font-semibold text-surface-600 dark:text-surface-400 mb-2">
+                          Your results will appear here
+                        </h3>
+                        <p className="text-surface-500 dark:text-surface-500 max-w-sm">
+                          Upload an image and ask a question about it to see
+                          AI-powered visual analysis results
+                        </p>
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
+
+                  {/* Action buttons (only show when there's a result) */}
+                  <AnimatePresence>
+                    {result && (
+                      <motion.div
+                        className="mt-6 flex flex-wrap justify-center space-x-0 space-y-3 sm:space-y-0 sm:space-x-3"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3, delay: 0.2 }}
+                      >
+                        <motion.button
+                          onClick={askNewQuestion}
+                          className="w-full sm:w-auto btn btn-primary"
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-1.5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          Ask Another Question
+                        </motion.button>
+
+                        <motion.button
+                          onClick={handleReset}
+                          className="w-full sm:w-auto btn btn-outline"
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-1.5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                            />
+                          </svg>
+                          Start Over
+                        </motion.button>
+
+                        <motion.button
+                          onClick={handleCompletion}
+                          className="w-full sm:w-auto btn btn-ghost"
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-1.5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                          Finish Session
+                        </motion.button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
             </div>
           </div>
         </motion.div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

@@ -3,13 +3,68 @@ import axios from "axios";
 // Base URL for API requests
 const API_BASE_URL = "/api/vqa";
 
-// Create axios instance
-const api = axios.create({
+/**
+ * Create a configured Axios instance with error handling
+ */
+const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
+
+// Add a response interceptor for error handling
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Enhance error information
+    const enhancedError = {
+      ...error,
+      isNetworkError: !error.response,
+      statusCode: error.response ? error.response.status : null,
+      message: getErrorMessage(error),
+    };
+
+    // Log error details to console for debugging
+    if (process.env.NODE_ENV !== "production") {
+      console.error("API Error:", enhancedError);
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+        console.error("Error response status:", error.response.status);
+      }
+    }
+
+    return Promise.reject(enhancedError);
+  }
+);
+
+/**
+ * Helper to get a user-friendly error message
+ */
+const getErrorMessage = (error) => {
+  if (!error.response) {
+    return "Network error. Please check your internet connection.";
+  }
+
+  const status = error.response.status;
+  const responseData = error.response.data;
+
+  // Handle specific status codes
+  switch (status) {
+    case 400:
+      return responseData.detail || "Invalid request. Please check your input.";
+    case 401:
+      return "Authentication required. Please log in.";
+    case 403:
+      return "You do not have permission to access this resource.";
+    case 404:
+      return "The requested resource was not found.";
+    case 500:
+      return "Server error. Please try again later.";
+    default:
+      return responseData.detail || "An unexpected error occurred.";
+  }
+};
 
 /**
  * Upload an image and create a new session
@@ -21,23 +76,13 @@ export const uploadImage = async (imageFile) => {
   formData.append("file", imageFile);
 
   try {
-    // For debugging
-    console.log("Uploading image to:", `${API_BASE_URL}/upload`);
-
-    const response = await api.post("/upload", formData, {
+    const response = await apiClient.post("/upload", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log("Upload response:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error uploading image:", error);
-    // For debugging
-    if (error.response) {
-      console.error("Error response data:", error.response.data);
-      console.error("Error response status:", error.response.status);
-    }
     throw error;
   }
 };
@@ -50,26 +95,12 @@ export const uploadImage = async (imageFile) => {
  */
 export const askQuestion = async (sessionId, question) => {
   try {
-    // For debugging
-    console.log("Asking question:", `${API_BASE_URL}/ask`, {
-      session_id: sessionId,
-      question,
-    });
-
-    const response = await api.post("/ask", {
+    const response = await apiClient.post("/ask", {
       session_id: sessionId,
       question: question,
     });
-
-    console.log("Question response:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error asking question:", error);
-    // For debugging
-    if (error.response) {
-      console.error("Error response data:", error.response.data);
-      console.error("Error response status:", error.response.status);
-    }
     throw error;
   }
 };
@@ -81,10 +112,9 @@ export const askQuestion = async (sessionId, question) => {
  */
 export const getSession = async (sessionId) => {
   try {
-    const response = await api.get(`/session/${sessionId}`);
+    const response = await apiClient.get(`/session/${sessionId}`);
     return response.data;
   } catch (error) {
-    console.error("Error getting session:", error);
     throw error;
   }
 };
@@ -96,10 +126,9 @@ export const getSession = async (sessionId) => {
  */
 export const completeSession = async (sessionId) => {
   try {
-    const response = await api.post(`/session/${sessionId}/complete`);
+    const response = await apiClient.post(`/session/${sessionId}/complete`);
     return response.data;
   } catch (error) {
-    console.error("Error completing session:", error);
     throw error;
   }
 };
@@ -111,10 +140,9 @@ export const completeSession = async (sessionId) => {
  */
 export const resetSession = async (sessionId) => {
   try {
-    const response = await api.delete(`/session/${sessionId}`);
+    const response = await apiClient.delete(`/session/${sessionId}`);
     return response.data;
   } catch (error) {
-    console.error("Error resetting session:", error);
     throw error;
   }
 };
@@ -125,14 +153,20 @@ export const resetSession = async (sessionId) => {
  */
 export const checkHealth = async () => {
   try {
+    // Use axios directly as this endpoint is outside the API_BASE_URL
     const response = await axios.get("/health");
     return response.data;
   } catch (error) {
-    console.error("API health check failed:", error);
-    throw error;
+    throw {
+      ...error,
+      isNetworkError: !error.response,
+      statusCode: error.response ? error.response.status : null,
+      message: getErrorMessage(error),
+    };
   }
 };
 
+// Export all API functions
 export default {
   uploadImage,
   askQuestion,
