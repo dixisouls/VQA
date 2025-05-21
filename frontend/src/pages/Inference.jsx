@@ -403,15 +403,15 @@ const Inference = () => {
             </div>
           </div>
 
-          {/* Main container */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-8">
-            {/* Left panel - Upload and Question */}
-            <div className="md:col-span-2 space-y-6">
+          {/* Main container - Modified layout */}
+          <div className="flex flex-col space-y-8">
+            {/* Top row - Upload and Question side by side */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Step 1: Upload Section */}
               <motion.div
                 animate={stepOneControls}
                 initial={{ opacity: 0, y: 20 }}
-                className="card p-6"
+                className="card p-6 h-full"
               >
                 <div className="flex items-center mb-4">
                   <div
@@ -437,7 +437,7 @@ const Inference = () => {
               <motion.div
                 animate={stepTwoControls}
                 initial={{ opacity: 0.5, y: 20 }}
-                className="card p-6"
+                className="card p-6 h-full"
               >
                 <div className="flex items-center mb-4">
                   <div
@@ -473,257 +473,251 @@ const Inference = () => {
                   </div>
                 )}
               </motion.div>
+            </div>
 
-              {/* History Section (conditionally shown) */}
-              {history.length > 0 && (
-                <motion.div
-                  className="card p-6"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  transition={{ duration: 0.3 }}
+            {/* Bottom row - Results Section */}
+            <motion.div
+              ref={resultSectionRef}
+              animate={stepThreeControls}
+              initial={{ opacity: 0.5, y: 20 }}
+              className="w-full"
+            >
+              {/* Step 3: Results Section */}
+              <div className="mb-4 flex items-center">
+                <div
+                  className={`mr-3 flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
+                    currentStep >= 3
+                      ? "bg-brand-100 text-brand-800 dark:bg-brand-900/30 dark:text-brand-300"
+                      : "bg-surface-100 text-surface-500 dark:bg-surface-800 dark:text-surface-400"
+                  }`}
                 >
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium text-surface-800 dark:text-white">
-                      Question History
+                  3
+                </div>
+                <h2 className="text-xl font-semibold text-surface-800 dark:text-white">
+                  View Results
+                </h2>
+              </div>
+
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="mb-6 p-4 bg-tertiary-50 dark:bg-tertiary-900/20 border border-tertiary-200 dark:border-tertiary-800 rounded-lg text-tertiary-700 dark:text-tertiary-300"
+                  >
+                    <div className="flex">
+                      <svg
+                        className="h-5 w-5 mr-2 flex-shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <p>{error}</p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <AnimatePresence>
+                {result ? (
+                  <ResultVisualization result={result} question={question} />
+                ) : !error && currentStep < 3 ? (
+                  <motion.div
+                    className="card p-8 h-full flex flex-col items-center justify-center text-center min-h-[400px]"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <div className="w-24 h-24 mb-6 text-surface-300 dark:text-surface-600">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-surface-600 dark:text-surface-400 mb-2">
+                      Your results will appear here
                     </h3>
-                    <button
-                      onClick={toggleHistory}
-                      className="p-1.5 text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200 rounded-full hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+                    <p className="text-surface-500 dark:text-surface-500 max-w-sm">
+                      Upload an image and ask a question about it to see
+                      AI-powered visual analysis results
+                    </p>
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+
+              {/* Action buttons (only show when there's a result) */}
+              <AnimatePresence>
+                {result && (
+                  <motion.div
+                    className="mt-6 flex flex-wrap justify-center space-x-0 space-y-3 sm:space-y-0 sm:space-x-3"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3, delay: 0.2 }}
+                  >
+                    <motion.button
+                      onClick={askNewQuestion}
+                      className="w-full sm:w-auto btn btn-primary"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
+                        className="h-5 w-5 mr-1.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
                       >
-                        {showHistory ? (
-                          <path
-                            fillRule="evenodd"
-                            d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
-                            clipRule="evenodd"
-                          />
-                        ) : (
-                          <path
-                            fillRule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                          />
-                        )}
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
                       </svg>
-                    </button>
-                  </div>
+                      Ask Another Question
+                    </motion.button>
 
-                  <AnimatePresence>
-                    {showHistory && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="space-y-3 max-h-64 overflow-y-auto pr-1 custom-scrollbar"
-                      >
-                        {history.map((item, index) => (
-                          <motion.div
-                            key={index}
-                            className="p-3 rounded-lg bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors cursor-pointer"
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            onClick={() => {
-                              setQuestion(item.question);
-                              setResult(item.result);
-                              setCurrentStep(3);
-                            }}
-                          >
-                            <div className="flex items-start">
-                              <div className="flex-shrink-0 text-brand-500 dark:text-brand-400 mt-1">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="h-4 w-4"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                  />
-                                </svg>
-                              </div>
-                              <div className="ml-2">
-                                <p className="text-sm font-medium text-surface-800 dark:text-white">
-                                  {item.question}
-                                </p>
-                                <p className="text-xs text-surface-600 dark:text-surface-400 mt-1 line-clamp-1">
-                                  {item.result.answer}
-                                </p>
-                              </div>
-                            </div>
-                          </motion.div>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              )}
-            </div>
-
-            {/* Right panel - Results */}
-            <div className="md:col-span-3">
-              <motion.div
-                ref={resultSectionRef}
-                animate={stepThreeControls}
-                initial={{ opacity: 0.5, y: 20 }}
-              >
-                {/* Step 3: Results Section */}
-                <div className="sticky top-24">
-                  <div className="mb-4 flex items-center">
-                    <div
-                      className={`mr-3 flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
-                        currentStep >= 3
-                          ? "bg-brand-100 text-brand-800 dark:bg-brand-900/30 dark:text-brand-300"
-                          : "bg-surface-100 text-surface-500 dark:bg-surface-800 dark:text-surface-400"
-                      }`}
+                    <motion.button
+                      onClick={handleReset}
+                      className="w-full sm:w-auto btn btn-outline"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
                     >
-                      3
-                    </div>
-                    <h2 className="text-xl font-semibold text-surface-800 dark:text-white">
-                      View Results
-                    </h2>
-                  </div>
-
-                  <AnimatePresence>
-                    {error && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                        className="mb-6 p-4 bg-tertiary-50 dark:bg-tertiary-900/20 border border-tertiary-200 dark:border-tertiary-800 rounded-lg text-tertiary-700 dark:text-tertiary-300"
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 mr-1.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
                       >
-                        <div className="flex">
-                          <svg
-                            className="h-5 w-5 mr-2 flex-shrink-0"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                          <p>{error}</p>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        />
+                      </svg>
+                      Start Over
+                    </motion.button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
 
-                  <AnimatePresence>
-                    {result ? (
-                      <ResultVisualization
-                        result={result}
-                        question={question}
-                      />
-                    ) : !error && currentStep < 3 ? (
-                      <motion.div
-                        className="card p-8 h-full flex flex-col items-center justify-center text-center min-h-[400px]"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                      >
-                        <div className="w-24 h-24 mb-6 text-surface-300 dark:text-surface-600">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={1.5}
-                              d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                        </div>
-                        <h3 className="text-xl font-semibold text-surface-600 dark:text-surface-400 mb-2">
-                          Your results will appear here
-                        </h3>
-                        <p className="text-surface-500 dark:text-surface-500 max-w-sm">
-                          Upload an image and ask a question about it to see
-                          AI-powered visual analysis results
-                        </p>
-                      </motion.div>
-                    ) : null}
-                  </AnimatePresence>
-
-                  {/* Action buttons (only show when there's a result) */}
-                  <AnimatePresence>
-                    {result && (
-                      <motion.div
-                        className="mt-6 flex flex-wrap justify-center space-x-0 space-y-3 sm:space-y-0 sm:space-x-3"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3, delay: 0.2 }}
-                      >
-                        <motion.button
-                          onClick={askNewQuestion}
-                          className="w-full sm:w-auto btn btn-primary"
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 mr-1.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                          Ask Another Question
-                        </motion.button>
-
-                        <motion.button
-                          onClick={handleReset}
-                          className="w-full sm:w-auto btn btn-outline"
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 mr-1.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                            />
-                          </svg>
-                          Start Over
-                        </motion.button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+            {/* History Section (conditionally shown) - Now at the bottom */}
+            {history.length > 0 && (
+              <motion.div
+                className="card p-6"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-medium text-surface-800 dark:text-white">
+                    Question History
+                  </h3>
+                  <button
+                    onClick={toggleHistory}
+                    className="p-1.5 text-surface-500 hover:text-surface-700 dark:text-surface-400 dark:hover:text-surface-200 rounded-full hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      {showHistory ? (
+                        <path
+                          fillRule="evenodd"
+                          d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+                          clipRule="evenodd"
+                        />
+                      ) : (
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      )}
+                    </svg>
+                  </button>
                 </div>
+
+                <AnimatePresence>
+                  {showHistory && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-3 max-h-64 overflow-y-auto pr-1 custom-scrollbar"
+                    >
+                      {history.map((item, index) => (
+                        <motion.div
+                          key={index}
+                          className="p-3 rounded-lg bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors cursor-pointer"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          onClick={() => {
+                            setQuestion(item.question);
+                            setResult(item.result);
+                            setCurrentStep(3);
+                          }}
+                        >
+                          <div className="flex items-start">
+                            <div className="flex-shrink-0 text-brand-500 dark:text-brand-400 mt-1">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                              </svg>
+                            </div>
+                            <div className="ml-2">
+                              <p className="text-sm font-medium text-surface-800 dark:text-white">
+                                {item.question}
+                              </p>
+                              <p className="text-xs text-surface-600 dark:text-surface-400 mt-1 line-clamp-1">
+                                {item.result.answer}
+                              </p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
-            </div>
+            )}
           </div>
         </motion.div>
       </div>
