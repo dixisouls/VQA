@@ -85,9 +85,36 @@ const Inference = () => {
 
   // Cleanup effect when component unmounts
   useEffect(() => {
-    return () => {
+    const handleBeforeUnload = () => {
+      // Attempt to complete the session when window is closed
       if (sessionId) {
-        // Try to complete the session when the component unmounts
+        // Use sendBeacon if available for more reliable sending during page unload
+        if (navigator.sendBeacon) {
+          const formData = new FormData();
+          formData.append("session_id", sessionId);
+          navigator.sendBeacon(
+            `/api/vqa/session/${sessionId}/complete`,
+            formData
+          );
+        } else {
+          // Fallback to synchronous XHR (less reliable but better than nothing)
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", `/api/vqa/session/${sessionId}/complete`, false);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.send(JSON.stringify({ session_id: sessionId }));
+        }
+      }
+    };
+
+    // Add beforeunload event listener
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      // Remove event listener
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+
+      // Regular cleanup when component unmounts
+      if (sessionId) {
         completeSession(sessionId).catch(() => {
           console.error("Failed to complete session during cleanup");
         });
@@ -690,29 +717,6 @@ const Inference = () => {
                             />
                           </svg>
                           Start Over
-                        </motion.button>
-
-                        <motion.button
-                          onClick={handleCompletion}
-                          className="w-full sm:w-auto btn btn-ghost"
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 mr-1.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                          Finish Session
                         </motion.button>
                       </motion.div>
                     )}
