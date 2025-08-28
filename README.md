@@ -261,6 +261,8 @@ npm start
 
 The model is trained on the **VizWiz dataset**, which contains:
 
+**Dataset Source**: @https://www.kaggle.com/datasets/lhanhsin/vizwiz
+
 - Real-world images taken by visually impaired individuals
 - Natural language questions about image content
 - Human-annotated answers and answerability labels
